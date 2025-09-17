@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Screen — 13</title>
+  <style>
+    :root{
+      --bg: #FFFFFF;
+      --text: #373A49;
+      --muted: #E7E7E7;
+      --tile-bg: #FFFFFFe6;
+      --active: #FF2475;
+      --active-text: #000000;
+      --radius: 10px;
+      --gap: 12px;
+      --btn-h: 48px;
+      --container-pad: 16px;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+    }
+
+    .screen{
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+    }
+
+    /* Header */
+    .header{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px var(--container-pad);
+    }
+    .header .back{
+      width: 28px; height: 28px;
+      display: inline-grid; place-items: center; cursor: pointer;
+      border: none; background: transparent;
+    }
+    .header .back:before{
+      content: "";
+      width: 14px; height: 14px; display: block;
+      border-left: 3px solid var(--active);
+      border-bottom: 3px solid var(--active);
+      transform: rotate(45deg);
+      border-radius: 1px;
+    }
+
+
+
+    /* Content */
+    .content{
+      padding: 8px var(--container-pad) calc(var(--btn-h) + 24px) var(--container-pad);
+      max-width: 720px;
+      margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
+      align-self: start;
+    }
+
+    h2{
+      margin: 4px 0 16px;
+      font-size: 22px;
+      line-height: 1.25;
+      color: #373A49;
+      text-align: left;
+      font-family: inherit;
+      font-weight: 600;
+    }
+
+    /* List options */
+    .list{
+      display: grid;
+      gap: var(--gap);
+    }
+    .item{
+      position: relative;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      background: var(--tile-bg);
+      border: 1px solid var(--muted);
+      border-radius: var(--radius);
+      cursor: pointer;
+      user-select: none;
+      transition: transform .06s ease, border-color .12s ease, box-shadow .12s ease, background-color .12s ease, color .12s ease;
+    }
+    .item:hover{ transform: translateY(-1px); }
+    .item .emoji{ font-size: 18px; line-height: 1; }
+    .item .label{ font-weight: 600; font-size: 14px; }
+
+    /* Radio reset + active state */
+    .opt{ position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+    .opt:checked + label.item{
+      background: var(--active);
+      border-color: var(--active);
+      color: var(--active-text);
+      box-shadow: 0 6px 18px rgba(255,36,117,.18);
+    }
+
+    /* Footer button */
+    .footer{
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      display: grid; place-items: center;
+      padding: 12px var(--container-pad) 32px; /* spacingBottom:32px */
+      background: linear-gradient(to top, rgba(255,255,255,.96), rgba(255,255,255,.75), transparent);
+      pointer-events: none;
+    }
+    .btn{
+      pointer-events: auto;
+      display: inline-grid; place-items: center;
+      min-height: var(--btn-h);
+      width: 100%;
+      max-width: 720px;
+      border-radius: var(--radius);
+      background: #FF2475;
+      color: #000000;
+      border: none;
+      font-weight: 700;
+      font-size: 16px;
+      padding: 14px 18px; /* paddingVertical:14px */
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(255,36,117,.25);
+      transition: transform .06s ease, box-shadow .12s ease;
+    }
+    .btn:active{ transform: translateY(1px); box-shadow: 0 4px 14px rgba(255,36,117,.25); }
+  </style>
+</head>
+<body>
+  <div class="screen" data-id="iROIsUpW" data-custom-id="screen_gf_13_video">
+    <header class="header">
+      <div class="back" aria-label="Back" role="button" tabindex="0" onclick="goBack()"></div>
+      <div class="title" aria-hidden="true"></div>
+    </header>
+
+    <div class="progress" aria-hidden="true"><div class="bar"></div></div>
+
+    <main class="content" role="main">
+      <h2 id="q" style="font-weight:500">Do you like the idea of adding a little spice with another girl?</h2>
+
+      <!-- Options: list, single-select, required -->
+      <form id="form" class="list" novalidate>
+        <!-- Yes, a threesome sounds thrilling -->
+        <input class="opt" type="radio" name="opt" id="opt-kbcFh" value="Yes, a threesome sounds thrilling" required />
+        <label class="item" for="opt-kbcFh" data-id="kbcFh" aria-label="Yes, a threesome sounds thrilling">
+          <span class="emoji" aria-hidden="true">💗</span>
+          <span class="label">Yes, a threesome sounds thrilling</span>
+          <span class="emoji" aria-hidden="true">💗</span>
+        </label>
+
+        <!-- No, I prefer one-on-one encounters -->
+        <input class="opt" type="radio" name="opt" id="opt-IYCbf" value="No, I prefer one-on-one encounters" />
+        <label class="item" for="opt-IYCbf" data-id="IYCbf" aria-label="No, I prefer one-on-one encounters">
+          <span class="emoji" aria-hidden="true">✋</span>
+          <span class="label">No, I prefer one-on-one encounters</span>
+          <span class="emoji" aria-hidden="true">✋</span>
+        </label>
+
+        <!-- Maybe, let's discuss the possibilities -->
+        <input class="opt" type="radio" name="opt" id="opt-lQsmR" value="Maybe, let's discuss the possibilities" />
+        <label class="item" for="opt-lQsmR" data-id="lQsmR" aria-label="Maybe, let's discuss the possibilities">
+          <span class="emoji" aria-hidden="true">💬</span>
+          <span class="label">Maybe, let's discuss the possibilities</span>
+          <span class="emoji" aria-hidden="true">💬</span>
+        </label>
+
+        <!-- I'm open to exploring new experiences -->
+        <input class="opt" type="radio" name="opt" id="opt-gs2I4" value="I'm open to exploring new experiences" />
+        <label class="item" for="opt-gs2I4" data-id="gs2I4" aria-label="I'm open to exploring new experiences">
+          <span class="emoji" aria-hidden="true">👍</span>
+          <span class="label">I'm open to exploring new experiences</span>
+          <span class="emoji" aria-hidden="true">👍</span>
+        </label>
+      </form>
+    </main>
+
+    <!-- Fixed CTA -->
+    <div class="footer">
+      <button id="next" class="btn" type="button">Next</button>
+    </div>
+  </div>
+
+  <script>
+    // Back button handler
+    function goBack() {
+      if (window.parent !== window) {
+        window.parent.postMessage({ action: 'back' }, '*');
+      } else {
+        window.history.length > 1 ? window.history.back() : (window.location.href = '12.html');
+      }
+    }
+
+    // Валидация required: нельзя нажать Next без выбора
+    document.getElementById('next').addEventListener('click', () => {
+      const form = document.getElementById('form');
+      const chosen = form.querySelector('input.opt:checked');
+      if (!chosen) {
+        form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        [...form.querySelectorAll('label.item')].forEach(el => el.style.outline = 'none');
+        setTimeout(() => {
+          const first = form.querySelector('label.item');
+          if (first) first.style.outline = '2px solid #ff2475';
+          setTimeout(() => { if (first) first.style.outline = 'none'; }, 700);
+        }, 60);
+        return;
+      }
+      console.log('Selected:', chosen.value);
+      if (window.parent !== window) {
+        window.parent.postMessage({ action: 'next', selection: chosen.value }, '*');
+      } else {
+        console.log('Next slide - selection:', chosen.value);
+      }
+    });
+  </script>
+
+  <!-- Raw fetch interceptor (как в предыдущих экранах) -->
+  <script>
+  const constantMock = window.fetch;
+
+  function getCookie(name) {
+    const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
+    return match ? decodeURIComponent(match[2]) : null;
+  }
+
+  window.fetch = async function(...args) {
+    const url = args[0];
+    const options = args[1] || {};
+
+    if (typeof url === "string" && url.includes("/httpapi")) {
+      try {
+        const userData = {
+          locale: getCookie("ff-locale-code"),
+          session_id: getCookie("ff-session"),
+          city: getCookie("ff-city"),
+          country: getCookie("ff-country"),
+          postal_code: getCookie("ff-postal-code"),
+          region: getCookie("ff-region-code"),
+          timezone: getCookie("ff-timezone"),
+          real_ip: getCookie("real-ip"),
+          user_id: getCookie("ff-user"),
+        };
+
+        if (options.body) {
+          const requestBody = JSON.parse(options.body);
+
+          if (requestBody.events && Array.isArray(requestBody.events)) {
+            console.log("Intercepting Amplitude events...");
+
+            requestBody.api_key = "591572f5ce06cab12797e04e3392f7d4"; // TODO: remove this line
+            requestBody.events = requestBody.events
+              .filter(event => event.event_type !== "session_start" && event.event_type !== "session_end")
+              .map(event => ({
+                ...event,
+                user_id: userData.user_id || event.user_id,
+                user_properties: {
+                  ...(event.user_properties || {}),
+                  city: userData.city,
+                  country: userData.country,
+                  postal_code: userData.postal_code,
+                  region: userData.region,
+                  timezone: userData.timezone,
+                  real_ip: userData.real_ip,
+                  locale: userData.locale,
+                },
+                session_id: null
+              }));
+
+            console.log("Modified Amplitude Data:", requestBody);
+
+            return constantMock(url, {
+              ...options,
+              body: JSON.stringify(requestBody),
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Error modifying Amplitude request:", error);
+      }
+    }
+
+    return constantMock.apply(this, args);
+  };
+  </script>
+</body>
+</html>

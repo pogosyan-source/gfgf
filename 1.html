@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Girlfriend - ONLY 18+</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #FFFFFF;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Background Video Styles */
+        .bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* White gradient overlay */
+        .gradient-overlay {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(to top, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.8) 30%, rgba(255, 255, 255, 0) 100%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .bg-video {
+                display: none;
+            }
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 16px;
+            z-index: 100;
+            text-align: center;
+            font-weight: bold;
+            color: #FF2475;
+            font-size: 14px;
+        }
+
+        /* Content Container */
+        .content-container {
+            position: fixed;
+            bottom: 120px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+        }
+
+        /* Text Styles */
+        .main-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #000000;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #000000;
+            text-align: center;
+            margin-bottom: 0;
+            line-height: 1.3;
+            max-width: 280px;
+        }
+
+        /* Button Styles with Pulse Animation */
+        .next-button {
+            position: fixed;
+            bottom: 32px;
+            left: 20px;
+            right: 20px;
+            background-color: #FF2475;
+            color: #000000;
+            border: none;
+            border-radius: 10px;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: pulse 1.4s cubic-bezier(0.75, 0, 0, 1) infinite;
+            z-index: 20;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 #FF2475;
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 0 8px rgba(255, 36, 117, 0.3);
+                transform: scale(1.01);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 36, 117, 0);
+                transform: scale(1);
+            }
+        }
+
+        .next-button:hover {
+            background-color: #e01f66;
+            transform: translateY(-2px);
+        }
+
+        .next-button:active {
+            transform: translateY(0);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 21px;
+            }
+            
+            .subtitle {
+                font-size: 17px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Video -->
+    <video class="bg-video" autoplay playsinline muted loop>
+        <source src="https://courageous-bonbon-8efaa6.netlify.app/gf2.mp4" type="video/mp4">
+    </video>
+
+    <!-- White gradient overlay -->
+    <div class="gradient-overlay"></div>
+
+    <!-- Header -->
+    <div class="header">
+        ONLY 18+
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-container">
+        <h2 class="main-title">
+            <strong>AI Girlfriend</strong>
+        </h2>
+        
+        <h2 class="subtitle">
+            Talk, flirt, and connect with your ideal AI companion — just the way you like it.
+        </h2>
+    </div>
+
+    <!-- Next Button -->
+    <button class="next-button" onclick="handleNext()">
+        Next
+    </button>
+
+    <script>
+        function handleNext() {
+            // Send message to parent window (index.html) to go to next slide
+            if (window.parent !== window) {
+                window.parent.postMessage({ action: 'next' }, '*');
+            } else {
+                // Fallback if opened directly
+                console.log('Next button clicked');
+                window.location.href = '2.html';
+            }
+        }
+
+        // Ensure video plays on mobile devices
+        document.addEventListener('DOMContentLoaded', function() {
+            const video = document.querySelector('.bg-video');
+            if (video) {
+                video.play().catch(e => {
+                    console.log('Video autoplay failed:', e);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

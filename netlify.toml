@@ -1,0 +1,12 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+# Optional: redirect all function calls explicitly (not required for /.netlify/functions/*)
+[[redirects]]
+  from = "/api/cherryx"
+  to = "/.netlify/functions/cherryx"
+  status = 200
+  force = true
+
+

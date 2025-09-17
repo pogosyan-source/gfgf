@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Girlfriend - Funnel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #FFFFFF;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        .funnel-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+        }
+
+        .funnel-wrapper {
+            width: 100%;
+            max-width: 500px;
+            height: 100vh;
+            position: relative;
+            background: #FFFFFF;
+            box-shadow: 0 0 40px rgba(0,0,0,0.1);
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .slide iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Global Progress Bar */
+        .global-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 16px 24px 16px;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            display: none;
+        }
+        
+        .global-progress.show {
+            display: block;
+        }
+
+        .progress-track {
+            height: 6px;
+            background: #F0F0F0;
+            border-radius: 3px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #FF2475;
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        /* Adjust slide content to account for progress bar */
+        .slide {
+            padding-top: 0px;
+        }
+        
+        .slide:not([data-slide="1"]) {
+            padding-top: 38px;
+        }
+
+        /* Loading indicator */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+            color: #373A49;
+        }
+
+        /* Responsive Design */
+        /* Mobile Devices (до 768px) */
+        @media (max-width: 767px) {
+            .funnel-container {
+                background: #FFFFFF;
+            }
+            
+            .funnel-wrapper {
+                max-width: 100%;
+                box-shadow: none;
+            }
+            
+            .global-progress {
+                padding: 12px 16px 12px;
+            }
+            
+            .progress-track {
+                height: 4px;
+            }
+        }
+
+        /* Tablets (768px - 1024px) */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .funnel-container {
+                background: linear-gradient(135deg, #ffffff 0%, #ffe1f0 50%, #ffb3d9 100%);
+                padding: 15px;
+            }
+            
+            .funnel-wrapper {
+                max-width: 450px;
+                box-shadow: 0 0 30px rgba(0,0,0,0.15);
+                border-radius: 15px;
+                overflow: hidden;
+            }
+            
+            .global-progress {
+                border-radius: 15px 15px 0 0;
+            }
+        }
+
+        /* Desktop (больше 1024px) */
+        @media (min-width: 1025px) {
+            .funnel-container {
+                background: linear-gradient(135deg, #ffffff 0%, #ffe1f0 50%, #ffb3d9 100%);
+                padding: 20px;
+            }
+            
+            .funnel-wrapper {
+                max-width: 480px;
+                box-shadow: 0 0 50px rgba(0,0,0,0.2);
+                border-radius: 20px;
+                overflow: hidden;
+            }
+            
+            .global-progress {
+                border-radius: 20px 20px 0 0;
+            }
+        }
+
+        /* Large Desktop (больше 1440px) */
+        @media (min-width: 1441px) {
+            .funnel-wrapper {
+                max-width: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="funnel-container">
+        <div class="funnel-wrapper">
+            <!-- Global Progress Bar -->
+            <div class="global-progress">
+                <div class="progress-track">
+                    <div id="progressBar" class="progress-fill"></div>
+                </div>
+            </div>
+            
+            <!-- Slide 1: Video intro -->
+        <div class="slide active" data-slide="1">
+            <iframe src="1.html" title="AI Girlfriend Intro"></iframe>
+            </div>
+
+        <!-- Slide 2: Ethnicity selection -->
+        <div class="slide" data-slide="2">
+            <iframe src="2.html" title="Ethnicity Selection"></iframe>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="slide" data-slide="3">
+            <iframe data-src="3.html" title="Slide 3"></iframe>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="slide" data-slide="4">
+            <iframe data-src="4.html" title="Slide 4"></iframe>
+        </div>
+
+        <!-- Slide 5 -->
+        <div class="slide" data-slide="5">
+            <iframe data-src="5.html" title="Slide 5"></iframe>
+        </div>
+
+        <!-- Slide 6 -->
+        <div class="slide" data-slide="6">
+            <iframe data-src="6.html" title="Slide 6"></iframe>
+        </div>
+
+        <!-- Slide 7 -->
+        <div class="slide" data-slide="7">
+            <iframe data-src="7.html" title="Slide 7"></iframe>
+        </div>
+
+        <!-- Slide 8 -->
+        <div class="slide" data-slide="8">
+            <iframe data-src="8.html" title="Slide 8"></iframe>
+        </div>
+
+        <!-- Slide 9 -->
+        <div class="slide" data-slide="9">
+            <iframe data-src="9.html" title="Slide 9"></iframe>
+        </div>
+
+        <!-- Slide 10 -->
+        <div class="slide" data-slide="10">
+            <iframe data-src="10.html" title="Slide 10"></iframe>
+        </div>
+
+        <!-- Slide 11 -->
+        <div class="slide" data-slide="11">
+            <iframe data-src="11.html" title="Slide 11"></iframe>
+        </div>
+
+        <!-- Slide 12 -->
+        <div class="slide" data-slide="12">
+            <iframe data-src="12.html" title="Slide 12"></iframe>
+        </div>
+
+        <!-- Slide 13 -->
+        <div class="slide" data-slide="13">
+            <iframe data-src="13.html" title="Slide 13"></iframe>
+        </div>
+
+        <!-- Slide 14 -->
+        <div class="slide" data-slide="14">
+            <iframe data-src="14.html" title="Slide 14"></iframe>
+            </div>
+
+        <!-- Slide 15 -->
+        <div class="slide" data-slide="15">
+            <iframe data-src="15.html" title="Slide 15"></iframe>
+        </div>
+
+        <!-- Slide 16 -->
+        <div class="slide" data-slide="16">
+            <iframe data-src="16.html" title="Slide 16"></iframe>
+        </div>
+
+        <!-- Slide 17 -->
+        <div class="slide" data-slide="17">
+            <iframe data-src="17.html" title="Slide 17"></iframe>
+            </div>
+
+        <!-- Slide 18 -->
+        <div class="slide" data-slide="18">
+            <iframe data-src="18.html" title="Slide 18"></iframe>
+            </div>
+
+        <!-- Slide 19 -->
+        <div class="slide" data-slide="19">
+            <iframe data-src="19.html" title="Slide 19"></iframe>
+        </div>
+
+        <!-- Slide 20 -->
+        <div class="slide" data-slide="20">
+            <iframe data-src="20.html" title="Slide 20"></iframe>
+        </div>
+
+        <!-- Slide 21: Payment -->
+        <div class="slide" data-slide="21">
+            <iframe data-src="payment.html" title="Payment"></iframe>
+        </div>
+
+            <div class="loading" id="loading" style="display: none;">Loading...</div>
+        </div>
+    </div>
+
+    <script>
+        // Funnel configuration
+        const FUNNEL_CONFIG = {
+            totalSlides: 21,
+            currentSlide: 1
+        };
+
+        // Answers store used by summary screens (e.g., 17.html)
+        const ANSWERS = {};
+
+        function setAnswer(key, rawValue){
+            if (!key) return;
+            ANSWERS[key] = rawValue;
+            broadcastState();
+        }
+
+        function safePost(target, payload){
+            try { target.postMessage(payload, '*'); } catch(_) {}
+        }
+
+        // Update progress bar based on current slide
+        function updateProgress() {
+            const progressBar = document.getElementById('progressBar');
+            const progressContainer = document.querySelector('.global-progress');
+            
+            if (progressBar && progressContainer) {
+                if (FUNNEL_CONFIG.currentSlide === 1) {
+                    progressContainer.classList.remove('show');
+                } else {
+                    progressContainer.classList.add('show');
+                    const progress = (FUNNEL_CONFIG.currentSlide / FUNNEL_CONFIG.totalSlides) * 100;
+                    progressBar.style.width = progress + '%';
+                }
+            }
+        }
+
+        // Navigate to specific slide
+        function goToSlide(slideNumber) {
+            if (slideNumber < 1 || slideNumber > FUNNEL_CONFIG.totalSlides) {
+                return;
+            }
+
+            // Hide all slides
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active');
+            });
+
+            // Show target slide
+            const targetSlide = document.querySelector(`[data-slide="${slideNumber}"]`);
+            if (targetSlide) {
+                // Lazy load iframe when slide becomes active
+                const iframe = targetSlide.querySelector('iframe');
+                if (iframe) {
+                    const hasSrc = iframe.getAttribute('src');
+                    const dataSrc = iframe.getAttribute('data-src');
+                    // Always reload slide 16 to restart its internal animation
+                    if (slideNumber === 16 && (hasSrc || dataSrc)) {
+                        iframe.setAttribute('src', (dataSrc || hasSrc));
+                        // Force restart by resetting src
+                        iframe.src = iframe.src;
+                    } else if (!hasSrc && dataSrc) {
+                        // Append parent's query params to payment slide to preserve tracking
+                        if (slideNumber === 21) {
+                            const qs = window.location.search;
+                            const url = dataSrc + (qs ? (dataSrc.includes('?') ? '&' : '?') + qs.substring(1) : '');
+                            iframe.setAttribute('src', url);
+                        } else {
+                            iframe.setAttribute('src', dataSrc);
+                        }
+                    }
+                }
+                targetSlide.classList.add('active');
+                FUNNEL_CONFIG.currentSlide = slideNumber;
+                updateProgress();
+            }
+        }
+
+        // Navigate to next slide
+        function nextSlide() {
+            goToSlide(FUNNEL_CONFIG.currentSlide + 1);
+        }
+
+        // Navigate to previous slide
+        function prevSlide() {
+            goToSlide(FUNNEL_CONFIG.currentSlide - 1);
+        }
+
+        // Listen for messages from iframes
+        window.addEventListener('message', function(event) {
+            const data = event.data;
+            
+            if (data.action === 'next') {
+                nextSlide();
+            } else if (data.action === 'back') {
+                prevSlide();
+            } else if (data.action === 'goToSlide') {
+                goToSlide(data.slide);
+            } else if (data.type === 'saveSelection' && data.key) {
+                // Persist selection from inner screen (radio/choice)
+                setAnswer(data.key, data.value);
+                try{ localStorage.setItem('ff.answers', JSON.stringify(ANSWERS)); }catch(_){ }
+            } else if (data.action === 'request-state') {
+                // Screen requests consolidated state
+                broadcastState();
+            }
+        });
+
+        // Initialize progress
+        updateProgress();
+        
+        // Ensure progress is updated when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgress();
+        });
+
+        function broadcastState(){
+            document.querySelectorAll('iframe').forEach(iframe => {
+                if (!iframe.contentWindow) return;
+                safePost(iframe.contentWindow, {
+                    action: 'state',
+                    answers: ANSWERS,
+                    currentSlide: FUNNEL_CONFIG.currentSlide,
+                    totalSlides: FUNNEL_CONFIG.totalSlides
+                });
+            });
+        }
+
+        // Handle iframe loading
+        document.querySelectorAll('iframe').forEach(iframe => {
+            iframe.addEventListener('load', function() {
+                broadcastState();
+            });
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') {
+                prevSlide();
+            } else if (e.key === 'ArrowRight') {
+                nextSlide();
+            }
+        });
+    </script>
+</body>
+</html>

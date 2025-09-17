@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Post-Payment</title>
+  <style>
+    :root{ --bg:#FFFFFF; --text:#373A49; --muted:#E7E7E7; --active:#FF2475; --radius:10px; --pad: clamp(0.8rem, 3vw, 1.2rem); }
+    html,body{ margin:0; padding:0; background:var(--bg); color:var(--text); font: clamp(0.95rem, 1.6vw, 1.05rem)/1.5 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif; }
+    .wrap{ min-height:100svh; display:grid; grid-template-rows:auto 1fr; }
+    .header{ display:flex; align-items:center; gap:clamp(0.4rem,2vw,1rem); padding: env(safe-area-inset-top) var(--pad) clamp(0.6rem,2vw,1rem); }
+    .back{ width: clamp(1.6rem, 4.5vw, 2rem); height: clamp(1.6rem, 4.5vw, 2rem); display:inline-grid; place-items:center; cursor:pointer; border:none; background:transparent; }
+    .back:before{ content:""; width: clamp(0.7rem,2.4vw,0.9rem); height: clamp(0.7rem,2.4vw,0.9rem); display:block; border-left: max(2px,0.2rem) solid var(--active); border-bottom: max(2px,0.2rem) solid var(--active); transform:rotate(45deg); border-radius:2px; }
+    .main{ max-width:min(780px, 100%); margin:0 auto; width:100%; padding: clamp(1rem,3vw,1.6rem) var(--pad) clamp(1.2rem,3.5vw,2rem); box-sizing:border-box; display:grid; gap: clamp(0.8rem,2.5vw,1.2rem); }
+    h1{ margin:0; font-size: clamp(1.2rem,3.2vw,1.6rem); text-align:center; }
+    p{ margin:0; opacity:.9; text-align:center; font-size: clamp(0.95rem,2.4vw,1.05rem); }
+    .tile{ display:grid; gap: clamp(0.6rem,2.4vw,1rem); background:#fff; border:1px solid var(--muted); border-radius: clamp(0.6rem,2vw,1rem); padding: clamp(1rem,3.2vw,1.6rem); }
+    .btn{ height: clamp(2.6rem,7svh,3.2rem); border:none; border-radius: clamp(0.6rem,2vw,1rem); background:var(--active); color:#000; font-weight:700; font-size: clamp(1rem,2.6vw,1.1rem); cursor:pointer; }
+    .error{ color:#ef4444; font-size: clamp(0.9rem,2.4vw,1rem); min-height: 1.2em; text-align:center; }
+    .center{ text-align:center; }
+  </style>
+</head>
+<body data-step="post-payment">
+  <div class="wrap">
+    <header class="header">
+      <button class="back" aria-label="Back" onclick="goBack()"></button>
+      <div class="title" aria-hidden="true"></div>
+    </header>
+    <main class="main">
+      <section class="tile center">
+        <h1>Завершаем авторизацию…</h1>
+        <p id="status">Обмениваем redirect_token на токен доступа.</p>
+        <div class="error" id="err"></div>
+        <button class="btn" id="retry" style="display:none">Повторить</button>
+      </section>
+    </main>
+  </div>
+
+  <script src="./paywall.js"></script>
+  <script>
+    function goBack(){
+      if (window.parent !== window) {
+        try{ window.parent.postMessage({ action: 'back' }, '*'); return; }catch(_){ }
+      }
+      window.history.length > 1 ? window.history.back() : (window.location.href = 'payment.html');
+    }
+    (function run(){
+      const statusEl = document.getElementById('status');
+      const errEl = document.getElementById('err');
+      const retry = document.getElementById('retry');
+      function setError(msg){ errEl.textContent = String(msg||'Ошибка'); retry.style.display = 'inline-flex'; }
+      retry.addEventListener('click', function(){ statusEl.textContent = 'Повторяем обмен…'; errEl.textContent=''; retry.style.display='none'; exchange(); });
+      async function exchange(){
+        try{
+          const params = new URLSearchParams(window.location.search);
+          const hasToken = !!params.get('redirect_token');
+          if (!hasToken) {
+            // Попробуем достать из localStorage
+            try{
+              var t = localStorage.getItem('pw.redirect_token');
+              if (t) { params.set('redirect_token', t); window.history.replaceState({}, '', window.location.pathname + '?' + params.toString()); }
+            }catch(e){}
+          }
+          const res = await window.paywall.exchangeRedirectToken();
+          statusEl.textContent = 'Готово! Вы авторизованы.';
+        }catch(e){
+          console.error(e);
+          setError(e?.error || e?.message || 'Не удалось обменять токен.');
+        }
+      }
+      exchange();
+    })();
+  </script>
+</body>
+</html>
+
+

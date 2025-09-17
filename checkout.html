@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <title>Checkout</title>
+  <style>
+    :root{ --bg:#FFFFFF; --text:#373A49; --muted:#E7E7E7; --active:#FF2475; --radius:10px; }
+    html, body{ margin:0; padding:0; background:var(--bg); color:var(--text); font: clamp(0.95rem, 1.6vw, 1.05rem)/1.5 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif; }
+    .screen{ min-height:100svh; display:grid; grid-template-rows:auto 1fr; }
+    .header{ display:flex; align-items:center; justify-content:space-between; gap:clamp(0.4rem,2vw,1rem); padding: env(safe-area-inset-top) clamp(0.8rem, 3vw, 1.2rem) clamp(0.6rem,2vw,1rem); }
+    .back{ display:inline-grid; place-items:center; width: clamp(1.6rem, 4.5vw, 2rem); height: clamp(1.6rem, 4.5vw, 2rem); border:none; background:transparent; cursor:pointer; }
+    .back:before{ content:""; width: clamp(0.7rem,2.4vw,0.9rem); height: clamp(0.7rem,2.4vw,0.9rem); border-left: max(2px,0.2rem) solid var(--active); border-bottom: max(2px,0.2rem) solid var(--active); transform: rotate(45deg); border-radius: 2px; }
+    .main{ max-width:min(780px, 100%); margin:0 auto; width:100%; padding: clamp(0.8rem,3vw,1.6rem); display:grid; gap: clamp(0.8rem,3vw,1.6rem); box-sizing:border-box; }
+    .tile{ border:1px solid var(--muted); border-radius: clamp(0.6rem,2vw,1rem); padding: clamp(1rem,3.2vw,1.6rem); background:#fff; }
+    .title{ font-weight:700; font-size: clamp(1.1rem,3.2vw,1.4rem); }
+    .desc{ opacity:.8; font-size: clamp(0.95rem,2.4vw,1.05rem); }
+    .btn{ display:inline-flex; align-items:center; justify-content:center; height: clamp(2.6rem,7svh,3.2rem); padding: 0 clamp(1rem,3vw,1.6rem); border:none; border-radius: clamp(0.6rem,2vw,1rem); background: var(--active); color:#000; font-weight:700; font-size: clamp(1rem,2.6vw,1.1rem); cursor:pointer; }
+    .center{ text-align:center; }
+  </style>
+</head>
+<body>
+  <div class="screen">
+    <header class="header">
+      <button class="back" aria-label="Назад" onclick="goBack()"></button>
+      <div class="title" aria-hidden="true"></div>
+    </header>
+    <main class="main">
+      <section class="tile center">
+        <div class="title">Перенаправляем на оплату…</div>
+        <div class="desc" id="status">Если ничего не происходит, нажмите кнопку ниже.</div>
+        <div style="height: clamp(0.4rem,2vh,1rem)"></div>
+        <button class="btn" onclick="retryStart()">Повторить переход к оплате</button>
+      </section>
+    </main>
+  </div>
+
+  <script src="./paywall.js"></script>
+  <script>
+    function goBack(){
+      if (window.history.length > 1) window.history.back(); else window.location.href = 'payment.html';
+    }
+    function retryStart(){
+      document.getElementById('status').textContent = 'Перенаправляем…';
+      window.paywall.startCheckout().catch(function(e){
+        document.getElementById('status').textContent = 'Не удалось перейти к оплате. Повторите попытку.';
+        console.error(e);
+      });
+    }
+
+    (function(){
+      try {
+        var params = new URLSearchParams(window.location.search);
+        if (params.get('redirect_token')){
+          // Уже вернулись с токеном — отправим на обмен
+          window.location.replace('post-email.html?' + params.toString());
+          return;
+        }
+      } catch(e){}
+      retryStart();
+    })();
+  </script>
+</body>
+</html>
+
+

@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Screen — 6</title>
+  <style>
+    :root{
+      --bg: #FFFFFF;
+      --text: #373A49;
+      --muted: #E7E7E7;
+      --tile-bg: #FFFFFFe6;
+      --active: #FF2475;
+      --active-text: #000000;
+      --radius: 10px;
+      --gap: 12px;
+      --tiles-columns: 2;
+      --btn-h: 48px;
+      --container-pad: 16px;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+    }
+
+    .screen{
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+    }
+
+    /* Header */
+    .header{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px var(--container-pad);
+    }
+    .header .back{
+      width: 28px; height: 28px;
+      display: inline-grid; place-items: center; cursor: pointer;
+      border: none; background: transparent;
+    }
+    .header .back:before{
+      content: "";
+      width: 14px; height: 14px; display: block;
+      border-left: 3px solid var(--active);
+      border-bottom: 3px solid var(--active);
+      transform: rotate(45deg);
+      border-radius: 1px;
+    }
+
+
+
+    /* Content */
+    .content{
+      padding: 8px var(--container-pad) calc(var(--btn-h) + 24px) var(--container-pad);
+      max-width: 720px;
+      margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
+      align-self: start;
+    }
+
+    h2{
+      margin: 4px 0 16px;
+      font-size: 22px;
+      line-height: 1.25;
+      color: #373A49;
+      text-align: center;
+      font-family: inherit;
+      font-weight: 600;
+    }
+
+    /* Single media */
+    .media{
+      display: block;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+      border: 1px solid var(--muted);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #f7f7f7;
+    }
+    .media img{
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    /* Footer button */
+    .footer{
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      display: grid; place-items: center;
+      padding: 12px var(--container-pad) 32px; /* spacingBottom:32px */
+      background: linear-gradient(to top, rgba(255,255,255,.96), rgba(255,255,255,.75), transparent);
+      pointer-events: none;
+    }
+    .btn{
+      pointer-events: auto;
+      display: inline-grid; place-items: center;
+      min-height: var(--btn-h);
+      width: 100%;
+      max-width: 720px;
+      border-radius: var(--radius);
+      background: #FF2475;
+      color: #000000;
+      border: none;
+      font-weight: 700;
+      font-size: 16px;
+      padding: 14px 18px; /* paddingVertical:14px */
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(255,36,117,.25);
+      transition: transform .06s ease, box-shadow .12s ease;
+    }
+    .btn:active{ transform: translateY(1px); box-shadow: 0 4px 14px rgba(255,36,117,.25); }
+
+    @media (min-width: 820px){
+      :root{ --tiles-columns: 3; }
+    }
+  </style>
+</head>
+<body>
+  <div class="screen" data-id="p3k8UjO5" data-custom-id="screen_gf_6_video">
+    <header class="header">
+      <div class="back" aria-label="Back" role="button" tabindex="0" onclick="goBack()"></div>
+      <div class="title" aria-hidden="true"></div>
+    </header>
+
+    <div class="progress" aria-hidden="true"><div class="bar"></div></div>
+
+    <main class="content" role="main">
+      <h2 id="q" style="color:#373A49; margin: 4px 0 16px;">Your girlfriend is ready to send you spicy photos but first she wants to get to know you a bit</h2>
+
+      <figure class="media" aria-label="Spicy preview">
+        <img
+          src="https://assets.fnlfx.com/01JFWG7W0D9H3X39D4BP1FD9S4/Q9EIqI.webp"
+          width="1000"
+          height="700"
+          alt="Girlfriend preview"
+          loading="eager"
+          decoding="async"
+        />
+      </figure>
+    </main>
+
+    <!-- Fixed CTA -->
+    <div class="footer">
+      <button id="next" class="btn" type="button">Continue</button>
+    </div>
+  </div>
+
+  <script>
+    // Back button handler
+    function goBack() {
+      if (window.parent !== window) {
+        window.parent.postMessage({ action: 'back' }, '*');
+      } else {
+        window.history.length > 1 ? window.history.back() : (window.location.href = '5.html');
+      }
+    }
+
+    // Continue: перейдём дальше без валидации
+    document.getElementById('next').addEventListener('click', () => {
+      if (window.parent !== window) {
+        window.parent.postMessage({ action: 'next' }, '*');
+      } else {
+        console.log('Next slide');
+      }
+    });
+  </script>
+
+  <!-- Raw fetch interceptor (как в шаблоне) -->
+  <script>
+  const constantMock = window.fetch;
+
+  function getCookie(name) {
+    const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
+    return match ? decodeURIComponent(match[2]) : null;
+  }
+
+  window.fetch = async function(...args) {
+    const url = args[0];
+    const options = args[1] || {};
+
+    if (typeof url === "string" && url.includes("/httpapi")) {
+      try {
+        const userData = {
+          locale: getCookie("ff-locale-code"),
+          session_id: getCookie("ff-session"),
+          city: getCookie("ff-city"),
+          country: getCookie("ff-country"),
+          postal_code: getCookie("ff-postal-code"),
+          region: getCookie("ff-region-code"),
+          timezone: getCookie("ff-timezone"),
+          real_ip: getCookie("real-ip"),
+          user_id: getCookie("ff-user"),
+        };
+
+        if (options.body) {
+          const requestBody = JSON.parse(options.body);
+
+          if (requestBody.events && Array.isArray(requestBody.events)) {
+            console.log("Intercepting Amplitude events...");
+
+            requestBody.api_key = "591572f5ce06cab12797e04e3392f7d4"; // TODO: remove this line
+            requestBody.events = requestBody.events
+              .filter(event => event.event_type !== "session_start" && event.event_type !== "session_end")
+              .map(event => ({
+                ...event,
+                user_id: userData.user_id || event.user_id,
+                user_properties: {
+                  ...(event.user_properties || {}),
+                  city: userData.city,
+                  country: userData.country,
+                  postal_code: userData.postal_code,
+                  region: userData.region,
+                  timezone: userData.timezone,
+                  real_ip: userData.real_ip,
+                  locale: userData.locale,
+                },
+                session_id: null
+              }));
+
+            console.log("Modified Amplitude Data:", requestBody);
+
+            return constantMock(url, {
+              ...options,
+              body: JSON.stringify(requestBody),
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Error modifying Amplitude request:", error);
+      }
+    }
+
+    return constantMock.apply(this, args);
+  };
+  </script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Screen — 12</title>
+  <style>
+    :root{
+      --bg: #FFFFFF;
+      --text: #373A49;
+      --muted: #E7E7E7;
+      --tile-bg: #FFFFFFe6;
+      --active: #FF2475;
+      --active-text: #000000;
+      --radius: 10px;
+      --gap: 8px;            /* list gap */
+      --tiles-columns: 1;    /* list layout → 1 col */
+      --btn-h: 48px;
+      --container-pad: 16px;
+    }
+
+    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif; }
+
+    .screen{ min-height: 100vh; display: grid; grid-template-rows: auto auto 1fr auto; }
+
+    /* Header */
+    .header{ display: flex; align-items: center; gap: 12px; padding: 12px var(--container-pad); }
+    .header .back{ width: 28px; height: 28px; display: inline-grid; place-items: center; cursor: pointer; border: none; background: transparent; }
+    .header .back:before{ content: ""; width: 14px; height: 14px; display: block; border-left: 3px solid var(--active); border-bottom: 3px solid var(--active); transform: rotate(45deg); border-radius: 1px; }
+
+
+
+    .content{ padding: 8px var(--container-pad) calc(var(--btn-h) + 24px) var(--container-pad); max-width: 720px; margin: 0 auto; width: 100%; box-sizing: border-box; align-self: start; }
+
+    h2{ margin: 4px 0 16px; font-size: 22px; line-height: 1.25; color: var(--text); text-align: left; font-family: inherit; font-weight: 500; }
+
+    /* List options */
+    .list{ display: grid; grid-template-columns: repeat(var(--tiles-columns), 1fr); gap: var(--gap); }
+
+    .row{ position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; background: var(--tile-bg); border: 1px solid var(--muted); border-radius: var(--radius); min-height: 56px; padding: 10px 12px; text-align: center; color: var(--text); transition: transform .06s ease, border-color .12s ease, box-shadow .12s ease, background-color .12s ease; }
+    .row:hover{ transform: translateY(-1px); }
+
+    .row__emoji{ font-size: 20px; line-height: 1; }
+    .row__label{ font-weight: 600; font-size: 14px; justify-self: center; }
+
+    /* Radio reset */
+    .opt{ position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+
+    /* Active state */
+    .opt:checked + label.row{ background: var(--active); border-color: var(--active); color: var(--active-text); box-shadow: 0 6px 18px rgba(255,36,117,.18); }
+
+    /* Fixed bottom button */
+    .footer{ position: fixed; left: 0; right: 0; bottom: 0; display: grid; place-items: center; padding: 12px var(--container-pad) 32px; background: linear-gradient(to top, rgba(255,255,255,.96), rgba(255,255,255,.75), transparent); pointer-events: none; }
+    .btn{ pointer-events: auto; display: inline-grid; place-items: center; min-height: var(--btn-h); width: 100%; max-width: 720px; border-radius: var(--radius); background: var(--active); color: var(--active-text); border: none; font-weight: 700; font-size: 16px; padding: 14px 18px; cursor: pointer; box-shadow: 0 8px 24px rgba(255,36,117,.25); transition: transform .06s ease, box-shadow .12s ease; }
+    .btn:active{ transform: translateY(1px); box-shadow: 0 4px 14px rgba(255,36,117,.25); }
+
+    @media (min-width: 820px){ :root{ --tiles-columns: 1; } }
+  </style>
+</head>
+<body>
+  <div class="screen" data-id="1vJGJrCs" data-custom-id="screen_gf_12_video">
+    <header class="header">
+      <button class="back" aria-label="Back" type="button" onclick="goBack()"></button>
+      <div class="title" aria-hidden="true"></div>
+    </header>
+    <div class="progress" aria-hidden="true"><div class="bar"></div></div>
+
+    <main class="content" role="main">
+      <!-- el_1Qn87 -->
+      <h2 id="q" style="margin-top:0;">Where should we meet for our secret rendezvous?</h2>
+
+      <!-- el_el_z86nJ (list, single-select, required) -->
+      <form id="form" class="list" novalidate>
+        <!-- In a cozy cafe -->
+        <input class="opt" type="radio" name="opt" id="opt-3pBxV" value="In a cozy cafe" required />
+        <label class="row" for="opt-3pBxV" data-id="3pBxV">
+          <span class="row__emoji" aria-hidden="true">☕</span>
+          <span class="row__label">In a cozy cafe</span>
+          <span class="row__emoji" aria-hidden="true">☕</span>
+        </label>
+
+        <!-- Under the moonlight on the beach -->
+        <input class="opt" type="radio" name="opt" id="opt-JW3MZ" value="Under the moonlight on the beach" />
+        <label class="row" for="opt-JW3MZ" data-id="JW3MZ">
+          <span class="row__emoji" aria-hidden="true">⛱️</span>
+          <span class="row__label">Under the moonlight on the beach</span>
+          <span class="row__emoji" aria-hidden="true">⛱️</span>
+        </label>
+
+        <!-- In a luxurious hotel room (trimmed) -->
+        <input class="opt" type="radio" name="opt" id="opt-gUe6A" value="In a luxurious hotel room" />
+        <label class="row" for="opt-gUe6A" data-id="gUe6A">
+          <span class="row__emoji" aria-hidden="true">🏨</span>
+          <span class="row__label">In a luxurious hotel room</span>
+          <span class="row__emoji" aria-hidden="true">🏨</span>
+        </label>
+
+        <!-- At a secluded mountain cabin -->
+        <input class="opt" type="radio" name="opt" id="opt-vpmL4" value="At a secluded mountain cabin" />
+        <label class="row" for="opt-vpmL4" data-id="vpmL4">
+          <span class="row__emoji" aria-hidden="true">⛰️</span>
+          <span class="row__label">At a secluded mountain cabin</span>
+          <span class="row__emoji" aria-hidden="true">⛰️</span>
+        </label>
+      </form>
+    </main>
+
+    <div class="footer">
+      <button id="next" class="btn" type="button">Next</button>
+    </div>
+  </div>
+
+  <script>
+    function goBack() {
+      if (window.parent !== window) {
+        window.parent.postMessage({ action: 'back' }, '*');
+      } else {
+        window.history.back();
+      }
+    }
+
+    document.getElementById('next').addEventListener('click', () => {
+      const form = document.getElementById('form');
+      const chosen = form.querySelector('input.opt:checked');
+      if (!chosen) {
+        form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const rows = [...form.querySelectorAll('label.row')];
+        rows.forEach(el => el.style.outline = 'none');
+        setTimeout(() => {
+          const first = rows[0];
+          if (first) first.style.outline = '2px solid #ff2475';
+          setTimeout(() => { if (first) first.style.outline = 'none'; }, 700);
+        }, 60);
+        return;
+      }
+      console.log('Selected:', chosen.value);
+      if (window.parent !== window) {
+        window.parent.postMessage({ action: 'next', selection: chosen.value }, '*');
+      } else {
+        console.log('Next slide - selection:', chosen.value);
+      }
+    });
+  </script>
+</body>
+</html>

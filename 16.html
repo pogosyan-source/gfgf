@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Screen — 15</title>
+  <style>
+    :root{
+      --bg: #FFFFFF;
+      --text: #373A49;
+      --muted: #E7E7E7;
+      --tile-bg: #FFFFFFe6;
+      --active: #FF2475;
+      --active-text: #000000;
+      --grad-start: #FF7124;
+      --radius: 10px;
+      --gap: 12px;
+      --btn-h: 48px;
+      --container-pad: 16px;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+    }
+
+    .screen{
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+    }
+
+    /* Header */
+    .header{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px var(--container-pad);
+    }
+    .header .back{
+      width: 28px; height: 28px;
+      display: inline-grid; place-items: center; cursor: pointer;
+      border: none; background: transparent;
+    }
+    .header .back:before{
+      content: "";
+      width: 14px; height: 14px; display: block;
+      border-left: 3px solid var(--active);
+      border-bottom: 3px solid var(--active);
+      transform: rotate(45deg);
+      border-radius: 1px;
+    }
+
+
+
+    /* Content */
+    .content{
+      padding: 8px var(--container-pad) 24px var(--container-pad);
+      max-width: 720px;
+      margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
+      align-self: start;
+    }
+
+    h2{
+      margin: 4px 0 16px;
+      font-size: 22px;
+      line-height: 1.25;
+      color: #373A49;
+      text-align: left;
+      font-family: inherit;
+      font-weight: 600;
+    }
+
+    /* Steps */
+    .steps{ display: grid; gap: var(--gap); }
+    .step{
+      background: var(--tile-bg);
+      border: 1px solid var(--muted);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+    }
+    .step__row{
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .step__status{
+      width: 18px; height: 18px; border-radius: 999px;
+      border: 2px solid var(--muted);
+      display: grid; place-items: center;
+      font-size: 12px; line-height: 1; color: var(--active-text);
+    }
+    .step__label{
+      font-size: 16px; font-weight: 600; color: var(--text);
+    }
+    .step__bar{
+      height: 10px;
+      border: 1px solid var(--muted);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #f3f3f3;
+    }
+    .step__fill{
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--grad-start), var(--active));
+      transition: width linear;
+    }
+
+    /* State colors */
+    .step.active .step__status{ border-color: var(--active); }
+    .step.done .step__status{
+      background: var(--active);
+      border-color: var(--active);
+    }
+    .step.done .step__status::after{
+      content: "✓";
+    }
+  </style>
+</head>
+<body>
+  <div class="screen" data-id="I2VqjNEe" data-custom-id="screen_gf_15_video">
+    <header class="header">
+      <div class="back" aria-label="Back" role="button" tabindex="0" onclick="goBack()"></div>
+      <div class="title" aria-hidden="true"></div>
+    </header>
+
+    <div class="progress" aria-hidden="true"><div class="bar"></div></div>
+
+    <main class="content" role="main">
+      <h2 id="q" style="font-weight:500"><strong>Analyzing your desires</strong></h2>
+
+      <section class="steps" id="steps" aria-label="Processing">
+        <!-- Step 1 -->
+        <div class="step" data-duration="2000">
+          <div class="step__row">
+            <div class="step__status" aria-hidden="true"></div>
+            <div class="step__label">Generating her nudes</div>
+          </div>
+          <div class="step__bar" aria-hidden="true"><div class="step__fill"></div></div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step" data-duration="2000">
+          <div class="step__row">
+            <div class="step__status" aria-hidden="true"></div>
+            <div class="step__label">Teaching her things you like</div>
+          </div>
+          <div class="step__bar" aria-hidden="true"><div class="step__fill"></div></div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step" data-duration="2000">
+          <div class="step__row">
+            <div class="step__status" aria-hidden="true"></div>
+            <div class="step__label">Sharing your desires with her</div>
+          </div>
+          <div class="step__bar" aria-hidden="true"><div class="step__fill"></div></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    function goBack() {
+      if (window.parent !== window) {
+        window.parent.postMessage({ action: 'back' }, '*');
+      } else {
+        window.history.length > 1 ? window.history.back() : (window.location.href = '14.html');
+      }
+    }
+
+    // Sequential step runner based on data-duration (ms)
+    const steps = Array.from(document.querySelectorAll('.step'));
+
+    function runStep(i){
+      if(i >= steps.length){
+        // All done → navigate next
+        if (window.parent !== window) {
+          window.parent.postMessage({ action: 'next' }, '*');
+        } else {
+          console.log('Next slide');
+        }
+        return;
+      }
+      const step = steps[i];
+      const fill = step.querySelector('.step__fill');
+      const dur = parseInt(step.getAttribute('data-duration'), 10) || 2000;
+
+      step.classList.add('active');
+      // set transition duration dynamically
+      fill.style.transitionDuration = dur + 'ms';
+
+      // ensure starting from 0%
+      fill.style.width = '0%';
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          fill.style.width = '100%';
+        });
+      });
+
+      const onDone = () => {
+        fill.removeEventListener('transitionend', onDone);
+        step.classList.remove('active');
+        step.classList.add('done');
+        runStep(i + 1);
+      };
+      fill.addEventListener('transitionend', onDone);
+    }
+
+    window.addEventListener('load', () => runStep(0));
+  </script>
+
+  <!-- Raw fetch interceptor (как в предыдущих экранах) -->
+  <script>
+  const constantMock = window.fetch;
+
+  function getCookie(name) {
+    const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
+    return match ? decodeURIComponent(match[2]) : null;
+  }
+
+  window.fetch = async function(...args) {
+    const url = args[0];
+    const options = args[1] || {};
+
+    if (typeof url === "string" && url.includes("/httpapi")) {
+      try {
+        const userData = {
+          locale: getCookie("ff-locale-code"),
+          session_id: getCookie("ff-session"),
+          city: getCookie("ff-city"),
+          country: getCookie("ff-country"),
+          postal_code: getCookie("ff-postal-code"),
+          region: getCookie("ff-region-code"),
+          timezone: getCookie("ff-timezone"),
+          real_ip: getCookie("real-ip"),
+          user_id: getCookie("ff-user"),
+        };
+
+        if (options.body) {
+          const requestBody = JSON.parse(options.body);
+
+          if (requestBody.events && Array.isArray(requestBody.events)) {
+            console.log("Intercepting Amplitude events...");
+
+            requestBody.api_key = "591572f5ce06cab12797e04e3392f7d4"; // TODO: remove this line
+            requestBody.events = requestBody.events
+              .filter(event => event.event_type !== "session_start" && event.event_type !== "session_end")
+              .map(event => ({
+                ...event,
+                user_id: userData.user_id || event.user_id,
+                user_properties: {
+                  ...(event.user_properties || {}),
+                  city: userData.city,
+                  country: userData.country,
+                  postal_code: userData.postal_code,
+                  region: userData.region,
+                  timezone: userData.timezone,
+                  real_ip: userData.real_ip,
+                  locale: userData.locale,
+                },
+                session_id: null
+              }));
+
+            console.log("Modified Amplitude Data:", requestBody);
+
+            return constantMock(url, {
+              ...options,
+              body: JSON.stringify(requestBody),
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Error modifying Amplitude request:", error);
+      }
+    }
+
+    return constantMock.apply(this, args);
+  };
+  </script>
+</body>
+</html>

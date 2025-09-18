@@ -29,7 +29,7 @@
   // Прямые вызовы без прокси
 
   async function jsonRequest(url, method, body){
-    const options = { method: method || 'GET' };
+    const options = { method: method || 'GET', mode: 'cors', credentials: 'include' };
     if (body !== undefined) {
       options.headers = { 'Content-Type': 'application/json' };
       options.body = JSON.stringify(body);

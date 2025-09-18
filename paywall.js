@@ -1,5 +1,5 @@
 (function(d, w){
-  const API_BASE = 'https://main.devnew-app.cherryx.ai';
+  const API_BASE = 'https://dev-newcherry.cherryx.ai';
   const ENDPOINTS = {
     register: API_BASE + '/api/v1/user',
     redirectToken: API_BASE + '/a-api/redirect-token',
@@ -26,21 +26,7 @@
     return String(qs.stream || 'xpn_m');
   }
 
-  // Отключаем встроенный Netlify proxy/edge — по умолчанию только прямые вызовы
-  const USE_NETLIFY_PROXY = false;
-  const QS = (function(){ try { return new URLSearchParams(w.location.search); } catch(e){ return new URLSearchParams(); } })();
-  const NO_PROXY = QS.get('no_proxy') === '1';
-  const PROXY_OVERRIDE = (function(){ try { return QS.get('proxy') || w.PAYWALL_PROXY_BASE || ''; } catch(e){ return ''; } })();
-
-  function withProxy(url){
-    if (NO_PROXY) return url;
-    // Используем только явный внешний прокси, если задан
-    if (PROXY_OVERRIDE) {
-      var base = PROXY_OVERRIDE.replace(/\/$/, '');
-      return base + (base.includes('?') ? '&' : '?') + 'path=' + encodeURIComponent(url);
-    }
-    return url;
-  }
+  // Прямые вызовы без прокси
 
   async function jsonRequest(url, method, body){
     const init = {
@@ -50,27 +36,10 @@
       headers: { 'Content-Type': 'application/json' }
     };
     if (body !== undefined) init.body = JSON.stringify(body);
-    const target = withProxy(url);
-    try {
-      const res = await fetch(target, init);
-      const data = await res.json().catch(()=>({}));
-      if (!res.ok) throw (data || { error: 'Request failed' });
-      return data;
-    } catch (e) {
-      // Fallback на прод‑домен, если dev‑домен недоступен
-      try {
-        if (url.indexOf('main.devnew-app.cherryx.ai') !== -1) {
-          const alt = url.replace('main.devnew-app.cherryx.ai', 'main.cherryx.watch');
-          const res2 = await fetch(withProxy(alt), init);
-          const data2 = await res2.json().catch(()=>({}));
-          if (!res2.ok) throw (data2 || { error: 'Request failed (fallback)' });
-          return data2;
-        }
-      } catch (e2) {
-        throw (e2 || e);
-      }
-      throw e;
-    }
+    const res = await fetch(url, init);
+    const data = await res.json().catch(()=>({}));
+    if (!res.ok) throw (data || { error: 'Request failed' });
+    return data;
   }
 
   function showInlineError(message){

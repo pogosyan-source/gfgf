@@ -50,10 +50,27 @@
       headers: { 'Content-Type': 'application/json' }
     };
     if (body !== undefined) init.body = JSON.stringify(body);
-    const res = await fetch(withProxy(url), init);
-    const data = await res.json().catch(()=>({}));
-    if (!res.ok) throw (data || { error: 'Request failed' });
-    return data;
+    const target = withProxy(url);
+    try {
+      const res = await fetch(target, init);
+      const data = await res.json().catch(()=>({}));
+      if (!res.ok) throw (data || { error: 'Request failed' });
+      return data;
+    } catch (e) {
+      // Fallback на прод‑домен, если dev‑домен недоступен
+      try {
+        if (url.indexOf('main.devnew-app.cherryx.ai') !== -1) {
+          const alt = url.replace('main.devnew-app.cherryx.ai', 'main.cherryx.watch');
+          const res2 = await fetch(withProxy(alt), init);
+          const data2 = await res2.json().catch(()=>({}));
+          if (!res2.ok) throw (data2 || { error: 'Request failed (fallback)' });
+          return data2;
+        }
+      } catch (e2) {
+        throw (e2 || e);
+      }
+      throw e;
+    }
   }
 
   function showInlineError(message){

@@ -23,10 +23,10 @@ exports.handler = async function(event) {
       return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'Missing path param' }) };
     }
 
-    // Allow both full URL and path; default to dev domain over HTTP (to avoid TLS issues)
+    // Allow both full URL and path; prefer HTTPS
     let target = urlParam;
     if (!/^https?:\/\//i.test(target)) {
-      const base = 'http://main.devnew-app.cherryx.ai';
+      const base = 'https://main.devnew-app.cherryx.ai';
       target = base.replace(/\/$/, '') + '/' + urlParam.replace(/^\//, '');
     }
 
@@ -40,15 +40,31 @@ exports.handler = async function(event) {
       init.body = event.body;
     }
 
-    const response = await fetch(target, init);
-    const contentType = response.headers.get('content-type') || '';
-    const text = await response.text();
-    const status = response.status;
+    async function doFetch(url) {
+      try {
+        const r = await fetch(url, init);
+        const ct = r.headers.get('content-type') || '';
+        const text = await r.text();
+        return { ok: r.ok, status: r.status, text, ct };
+      } catch (e) {
+        return { ok: false, status: 502, text: JSON.stringify({ error: 'fetch failed', detail: String(e && e.message || e) }), ct: 'application/json' };
+      }
+    }
+
+    let res1 = await doFetch(target);
+    if (!res1.ok && /^https:\/\//i.test(target)) {
+      // retry over http if https failed
+      try {
+        const urlHttp = target.replace(/^https:/i, 'http:');
+        const res2 = await doFetch(urlHttp);
+        if (res2.ok || res2.status !== 502) res1 = res2;
+      } catch (_) {}
+    }
 
     return {
-      statusCode: status,
-      headers: { ...corsHeaders, 'Content-Type': contentType },
-      body: text
+      statusCode: res1.status,
+      headers: { ...corsHeaders, 'Content-Type': res1.ct },
+      body: res1.text
     };
   } catch (e) {
     return {

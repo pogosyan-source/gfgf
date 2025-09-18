@@ -33,6 +33,11 @@
 
   function withProxy(url){
     if (NO_PROXY) return url;
+    // Dev upstream sometimes only HTTP; when proxying, downgrade https->http for this host
+    try {
+      var u = new URL(url);
+      if (u.hostname === 'main.devnew-app.cherryx.ai') { u.protocol = 'http:'; url = u.toString(); }
+    } catch(e){}
     if (USE_NETLIFY_PROXY) return '/.netlify/functions/cherryx?path=' + encodeURIComponent(url);
     if (PROXY_OVERRIDE) {
       var base = PROXY_OVERRIDE.replace(/\/$/, '');

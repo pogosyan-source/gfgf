@@ -23,16 +23,17 @@ exports.handler = async function(event) {
       return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'Missing path param' }) };
     }
 
-    // Allow both full URL and path
+    // Allow both full URL and path; default to dev domain over HTTP (to avoid TLS issues)
     let target = urlParam;
     if (!/^https?:\/\//i.test(target)) {
-      const base = 'https://main.cherryx.watch';
+      const base = 'http://main.devnew-app.cherryx.ai';
       target = base.replace(/\/$/, '') + '/' + urlParam.replace(/^\//, '');
     }
 
     const init = {
       method: event.httpMethod,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      redirect: 'follow'
     };
 
     if (event.body && event.httpMethod !== 'GET') {

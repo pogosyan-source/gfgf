@@ -9,4 +9,8 @@
   status = 200
   force = true
 
+[[edge_functions]]
+  function = "cherryx"
+  path = "/.netlify/edge-functions/cherryx"
+
 

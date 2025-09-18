@@ -33,7 +33,7 @@
 
   function withProxy(url){
     if (NO_PROXY) return url;
-    if (USE_NETLIFY_PROXY) return '/.netlify/functions/cherryx?path=' + encodeURIComponent(url);
+    if (USE_NETLIFY_PROXY) return '/.netlify/edge-functions/cherryx?path=' + encodeURIComponent(url);
     if (PROXY_OVERRIDE) {
       var base = PROXY_OVERRIDE.replace(/\/$/, '');
       return base + (base.includes('?') ? '&' : '?') + 'path=' + encodeURIComponent(url);

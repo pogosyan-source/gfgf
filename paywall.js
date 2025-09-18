@@ -1,5 +1,5 @@
 (function(d, w){
-  const API_BASE = 'https://main.cherryx.watch';
+  const API_BASE = 'https://main.devnew-app.cherryx.ai';
   const ENDPOINTS = {
     register: API_BASE + '/api/v1/user',
     redirectToken: API_BASE + '/a-api/redirect-token',

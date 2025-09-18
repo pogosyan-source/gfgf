@@ -29,17 +29,13 @@
   // Прямые вызовы без прокси
 
   async function jsonRequest(url, method, body){
-    const init = {
-      method: method || 'GET',
-      mode: 'cors',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' }
-    };
-    if (body !== undefined) init.body = JSON.stringify(body);
-    const res = await fetch(url, init);
-    const data = await res.json().catch(()=>({}));
-    if (!res.ok) throw (data || { error: 'Request failed' });
-    return data;
+    const options = { method: method || 'GET' };
+    if (body !== undefined) {
+      options.headers = { 'Content-Type': 'application/json' };
+      options.body = JSON.stringify(body);
+    }
+    const res = await fetch(url, options);
+    return res.json();
   }
 
   function showInlineError(message){

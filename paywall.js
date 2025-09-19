@@ -50,24 +50,24 @@
     try {
       const token = resp.access_token || resp.token || resp.result?.access_token || resp.result?.token || '';
       if (token) { try { localStorage.setItem(STORAGE.accessToken, token); } catch(e){} }
-    } catch(_){}
+    } catch(_){ }
     return resp;
   }
 
   async function fetchRedirectToken(){
-    let token = '';
-    try { token = localStorage.getItem(STORAGE.accessToken) || ''; } catch(_){}
-    const headers = token ? { Authorization: 'Bearer ' + token } : undefined;
+    let authToken = '';
+    try { authToken = localStorage.getItem(STORAGE.accessToken) || ''; } catch(_){ }
+    const headers = authToken ? { Authorization: 'Bearer ' + authToken } : undefined;
     const resp = await jsonRequest(ENDPOINTS.redirectToken, 'GET', undefined, headers);
-    const token = resp.redirect_token || resp.token || resp.result?.redirect_token || resp.result?.token || resp.result || '';
-    if (!token) throw new Error('Не удалось получить redirect_token');
-    return token;
+    const redirectToken = resp.redirect_token || resp.token || resp.result?.redirect_token || resp.result?.token || resp.result || '';
+    if (!redirectToken) throw new Error('Не удалось получить redirect_token');
+    return redirectToken;
   }
 
   async function initiatePayment(methodId, productId){
     const payload = { method_id: String(methodId), product_id: String(productId) };
     let token = '';
-    try { token = localStorage.getItem(STORAGE.accessToken) || ''; } catch(_){}
+    try { token = localStorage.getItem(STORAGE.accessToken) || ''; } catch(_){ }
     const headers = token ? { Authorization: 'Bearer ' + token } : undefined;
     const resp = await jsonRequest(ENDPOINTS.initiatePayment, 'POST', payload, headers);
     const url = resp.redirect || resp.url || resp.result?.redirect || resp.result?.url || '';

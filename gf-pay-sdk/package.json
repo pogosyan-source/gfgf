@@ -1,0 +1,32 @@
+{
+  "name": "cherry-pay-sdk",
+  "version": "1.0.0",
+  "description": "JavaScript SDK for Cherry Payment API integration",
+  "main": "cherry-pay-sdk.js",
+  "scripts": {
+    "test": "echo \"Open index.html in browser to test the SDK\" && exit 1",
+    "serve": "python3 -m http.server 8080 || python -m SimpleHTTPServer 8080"
+  },
+  "keywords": [
+    "payment",
+    "api",
+    "sdk",
+    "cherry",
+    "subscription",
+    "javascript"
+  ],
+  "author": "Cherry Pay SDK",
+  "license": "MIT",
+  "files": [
+    "cherry-pay-sdk.js",
+    "index.html",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "."
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  }
+}

@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cherry Pay SDK Test Page</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    .content {
+      padding: 30px;
+    }
+
+    .section {
+      margin-bottom: 40px;
+      padding: 25px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      border-left: 4px solid #667eea;
+    }
+
+    .section h2 {
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #555;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e1e5e9;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 8px;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .result.success {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+
+    .result.error {
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+
+    .result.info {
+      background: #d1ecf1;
+      border: 1px solid #bee5eb;
+      color: #0c5460;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .product-card {
+      background: white;
+      border: 2px solid #e1e5e9;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .product-card:hover {
+      border-color: #667eea;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-card.selected {
+      border-color: #667eea;
+      background: #f0f2ff;
+    }
+
+    .product-card h3 {
+      color: #333;
+      margin-bottom: 5px;
+      font-size: 1rem;
+    }
+
+    .product-card p {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .token-display {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 15px;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 12px;
+      word-break: break-all;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-left: 10px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        margin: 10px;
+        border-radius: 12px;
+      }
+
+      .header {
+        padding: 20px;
+      }
+
+      .header h1 {
+        font-size: 2rem;
+      }
+
+      .content {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🍒 Cherry Pay SDK</h1>
+      <p>Test interface for Cherry Payment API integration</p>
+    </div>
+
+    <div class="content">
+      <!-- SDK Initialization Section -->
+      <div class="section">
+        <h2>🔧 SDK Configuration</h2>
+        <div class="form-group">
+          <label for="baseUrl">Base URL:</label>
+          <input type="text" id="baseUrl" value="https://dev-newcherry.cherryx.ai">
+        </div>
+        <div class="form-group">
+          <label for="apiUrl">API URL:</label>
+          <input type="text" id="apiUrl" value="https://dev-newcherry.cherryx.ai">
+        </div>
+        <div class="form-group">
+          <label for="stream">Stream (Traffic Source):</label>
+          <input type="text" id="stream" value="xpn_m">
+        </div>
+        <button class="btn" onclick="initializeSDK()">Initialize SDK</button>
+        <div id="initResult" class="result hidden"></div>
+      </div>
+
+      <!-- User Registration Section -->
+      <div class="section">
+        <h2>👤 User Registration</h2>
+        <div class="form-group">
+          <label for="userEmail">Email:</label>
+          <input type="email" id="userEmail" placeholder="user@example.com">
+        </div>
+        <button class="btn" onclick="registerUser()">Register User</button>
+        <div id="registerResult" class="result hidden"></div>
+      </div>
+
+      <!-- Redirect Token Section -->
+      <div class="section">
+        <h2>🔑 Redirect Token</h2>
+        <p>Get a redirect token for payment authorization:</p>
+        <button class="btn btn-secondary" onclick="getRedirectToken()">Get Redirect Token</button>
+        <div id="tokenResult" class="result hidden"></div>
+        <div id="tokenDisplay" class="token-display hidden">
+          <strong>Current Tokens:</strong><br>
+          <span id="tokenInfo"></span>
+        </div>
+      </div>
+
+      <!-- Product Selection Section -->
+      <div class="section">
+        <h2>🛍️ Product Selection</h2>
+        <p>Choose a subscription plan:</p>
+        <div class="product-grid" id="productGrid">
+          <!-- Products will be populated by JavaScript -->
+        </div>
+        <input type="hidden" id="selectedProduct" value="1">
+      </div>
+
+      <!-- Payment Initiation Section -->
+      <div class="section">
+        <h2>💳 Payment Initiation</h2>
+        <div class="form-group">
+          <label for="methodId">Payment Method ID:</label>
+          <input type="text" id="methodId" value="1">
+        </div>
+        <button class="btn btn-success" onclick="initiatePayment()">Initiate Payment</button>
+        <div id="paymentResult" class="result hidden"></div>
+      </div>
+
+      <!-- Complete Flow Section -->
+      <div class="section">
+        <h2>🚀 Complete Payment Flow</h2>
+        <p>Execute the entire payment flow in one action:</p>
+        <div class="form-group">
+          <label for="flowEmail">Email:</label>
+          <input type="email" id="flowEmail" placeholder="user@example.com">
+        </div>
+        <button class="btn btn-success" onclick="completePaymentFlow()">Complete Flow</button>
+        <div id="flowResult" class="result hidden"></div>
+      </div>
+
+      <!-- Token Exchange Section -->
+      <div class="section">
+        <h2>🔄 Token Exchange</h2>
+        <p>Exchange redirect token for access token (simulates post-payment redirect):</p>
+        <div class="form-group">
+          <label for="exchangeToken">Redirect Token (optional - uses stored token if empty):</label>
+          <input type="text" id="exchangeToken" placeholder="Leave empty to use stored token">
+        </div>
+        <button class="btn btn-secondary" onclick="exchangeToken()">Exchange Token</button>
+        <button class="btn btn-danger" onclick="handlePaymentRedirect()">Handle Payment Redirect</button>
+        <div id="exchangeResult" class="result hidden"></div>
+      </div>
+
+      <!-- Utilities Section -->
+      <div class="section">
+        <h2>🛠️ Utilities</h2>
+        <button class="btn btn-secondary" onclick="showTokens()">Show Current Tokens</button>
+        <button class="btn btn-danger" onclick="clearTokens()">Clear Tokens</button>
+        <button class="btn" onclick="clearAllResults()">Clear All Results</button>
+        <div id="utilityResult" class="result hidden"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Include the SDK -->
+  <script src="cherry-pay-sdk.js"></script>
+
+  <script>
+    // Global SDK instance
+    let cherrySDK = null;
+
+    // Initialize SDK
+    function initializeSDK() {
+      const baseUrl = document.getElementById('baseUrl').value;
+      const apiUrl = document.getElementById('apiUrl').value;
+      const stream = document.getElementById('stream').value;
+
+      try {
+        cherrySDK = new CherryPaySDK({
+          baseUrl: baseUrl,
+          apiUrl: apiUrl,
+          stream: stream
+        });
+
+        showResult('initResult', 'success', 'SDK initialized successfully!\n\nConfiguration:\n' +
+          JSON.stringify({ baseUrl, apiUrl, stream }, null, 2));
+
+        // Initialize product grid
+        initializeProductGrid();
+      } catch (error) {
+        showResult('initResult', 'error', 'Failed to initialize SDK: ' + error.message);
+      }
+    }
+
+    // Initialize product grid
+    function initializeProductGrid() {
+      if (!cherrySDK) return;
+
+      const products = cherrySDK.getProductCatalog();
+      const productGrid = document.getElementById('productGrid');
+      productGrid.innerHTML = '';
+
+      Object.entries(products).forEach(([id, name]) => {
+        const productCard = document.createElement('div');
+        productCard.className = 'product-card';
+        productCard.onclick = (e) => selectProduct(id, e);
+
+        productCard.innerHTML = `
+                    <h3>ID: ${id}</h3>
+                    <p>${name}</p>
+                `;
+
+        if (id === '1') {
+          productCard.classList.add('selected');
+        }
+
+        productGrid.appendChild(productCard);
+      });
+    }
+
+    // Select product
+    function selectProduct(productId, e) {
+      // Remove selection from all cards
+      document.querySelectorAll('.product-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+
+      // Add selection to clicked card
+      const srcEl = e && (e.currentTarget || e.target);
+      const cardEl = srcEl && srcEl.closest ? srcEl.closest('.product-card') : null;
+      if (cardEl) {
+        cardEl.classList.add('selected');
+      }
+      document.getElementById('selectedProduct').value = productId;
+    }
+
+    // Register user
+    async function registerUser() {
+      if (!cherrySDK) {
+        showResult('registerResult', 'error', 'SDK not initialized. Please initialize SDK first.');
+        return;
+      }
+
+      const email = document.getElementById('userEmail').value;
+      if (!email) {
+        showResult('registerResult', 'error', 'Please enter an email address.');
+        return;
+      }
+
+      showLoading('registerResult');
+
+      try {
+        const result = await cherrySDK.registerUser(email);
+        showResult('registerResult', 'success', 'User registered successfully!\n\n' +
+          JSON.stringify(result, null, 2));
+      } catch (error) {
+        showResult('registerResult', 'error', 'Registration failed: ' + error.message);
+      }
+    }
+
+    // Get redirect token
+    async function getRedirectToken() {
+      if (!cherrySDK) {
+        showResult('tokenResult', 'error', 'SDK not initialized. Please initialize SDK first.');
+        return;
+      }
+
+      showLoading('tokenResult');
+
+      try {
+        const token = await cherrySDK.getRedirectToken();
+        showResult('tokenResult', 'success', 'Redirect token obtained successfully!\n\nToken: ' + token);
+        updateTokenDisplay();
+      } catch (error) {
+        showResult('tokenResult', 'error', 'Failed to get redirect token: ' + error.message);
+      }
+    }
+
+    // Initiate payment
+    async function initiatePayment() {
+      if (!cherrySDK) {
+        showResult('paymentResult', 'error', 'SDK not initialized. Please initialize SDK first.');
+        return;
+      }
+
+      const methodId = document.getElementById('methodId').value;
+      const productId = document.getElementById('selectedProduct').value;
+
+      if (!methodId) {
+        showResult('paymentResult', 'error', 'Please enter a payment method ID.');
+        return;
+      }
+
+      showLoading('paymentResult');
+
+      try {
+        const result = await cherrySDK.initiatePayment(methodId, productId);
+        showResult('paymentResult', 'success', 'Payment initiated successfully!\n\n' +
+          JSON.stringify(result, null, 2));
+      } catch (error) {
+        showResult('paymentResult', 'error', 'Payment initiation failed: ' + error.message);
+      }
+    }
+
+    // Complete payment flow
+    async function completePaymentFlow() {
+      if (!cherrySDK) {
+        showResult('flowResult', 'error', 'SDK not initialized. Please initialize SDK first.');
+        return;
+      }
+
+      const email = document.getElementById('flowEmail').value;
+      const productId = document.getElementById('selectedProduct').value;
+      const methodId = document.getElementById('methodId').value;
+
+      if (!email) {
+        showResult('flowResult', 'error', 'Please enter an email address.');
+        return;
+      }
+
+      showLoading('flowResult');
+
+      try {
+        const result = await cherrySDK.completePaymentFlow(email, productId, methodId);
+        showResult('flowResult', result.success ? 'success' : 'error',
+          'Payment flow completed!\n\n' + JSON.stringify(result, null, 2));
+        updateTokenDisplay();
+      } catch (error) {
+        showResult('flowResult', 'error', 'Payment flow failed: ' + error.message);
+      }
+    }
+
+    // Exchange token
+    async function exchangeToken() {
+      if (!cherrySDK) {
+        showResult('exchangeResult', 'error', 'SDK not initialized. Please initialize SDK first.');
+        return;
+      }
+
+      const tokenInput = document.getElementById('exchangeToken').value;
+      showLoading('exchangeResult');
+
+      try {
+        const result = await cherrySDK.exchangeToken(tokenInput || null);
+        showResult('exchangeResult', 'success', 'Token exchanged successfully!\n\n' +
+          JSON.stringify(result, null, 2));
+        updateTokenDisplay();
+      } catch (error) {
+        showResult('exchangeResult', 'error', 'Token exchange failed: ' + error.message);
+      }
+    }
+
+    // Handle payment redirect
+    async function handlePaymentRedirect() {
+      if (!cherrySDK) {
+        showResult('exchangeResult', 'error', 'SDK not initialized. Please initialize SDK first.');
+        return;
+      }
+
+      showLoading('exchangeResult');
+
+      try {
+        const result = await cherrySDK.handlePaymentRedirect();
+        showResult('exchangeResult', result.success ? 'success' : 'error',
+          'Payment redirect handled!\n\n' + JSON.stringify(result, null, 2));
+        updateTokenDisplay();
+      } catch (error) {
+        showResult('exchangeResult', 'error', 'Failed to handle payment redirect: ' + error.message);
+      }
+    }
+
+    // Show current tokens
+    function showTokens() {
+      if (!cherrySDK) {
+        showResult('utilityResult', 'error', 'SDK not initialized. Please initialize SDK first.');
+        return;
+      }
+
+      const tokens = cherrySDK.getTokens();
+      showResult('utilityResult', 'info', 'Current Tokens:\n\n' + JSON.stringify(tokens, null, 2));
+    }
+
+    // Clear tokens
+    function clearTokens() {
+      if (!cherrySDK) {
+        showResult('utilityResult', 'error', 'SDK not initialized. Please initialize SDK first.');
+        return;
+      }
+
+      cherrySDK.clearTokens();
+      showResult('utilityResult', 'success', 'Tokens cleared successfully!');
+      updateTokenDisplay();
+    }
+
+    // Clear all results
+    function clearAllResults() {
+      const resultElements = document.querySelectorAll('.result');
+      resultElements.forEach(element => {
+        element.classList.add('hidden');
+        element.textContent = '';
+      });
+
+      document.getElementById('tokenDisplay').classList.add('hidden');
+      showResult('utilityResult', 'success', 'All results cleared!');
+    }
+
+    // Update token display
+    function updateTokenDisplay() {
+      if (!cherrySDK) return;
+
+      const tokens = cherrySDK.getTokens();
+      const tokenDisplay = document.getElementById('tokenDisplay');
+      const tokenInfo = document.getElementById('tokenInfo');
+
+      if (tokens.redirectToken || tokens.accessToken) {
+        tokenInfo.innerHTML = `
+                    Redirect Token: ${tokens.redirectToken || 'None'}<br>
+                    Access Token: ${tokens.accessToken || 'None'}
+                `;
+        tokenDisplay.classList.remove('hidden');
+      } else {
+        tokenDisplay.classList.add('hidden');
+      }
+    }
+
+    // Show result helper
+    function showResult(elementId, type, message) {
+      const element = document.getElementById(elementId);
+      element.className = `result ${type}`;
+      element.textContent = message;
+      element.classList.remove('hidden');
+    }
+
+    // Show loading helper
+    function showLoading(elementId) {
+      const element = document.getElementById(elementId);
+      element.className = 'result info';
+      element.innerHTML = 'Loading... <div class="loading"></div>';
+      element.classList.remove('hidden');
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function () {
+      // Auto-initialize SDK with default values
+      initializeSDK();
+
+      // Check for redirect token in URL (for testing redirect flow)
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectToken = urlParams.get('redirect_token');
+      if (redirectToken) {
+        document.getElementById('exchangeToken').value = redirectToken;
+        showResult('exchangeResult', 'info', 'Redirect token found in URL: ' + redirectToken + '\n\nClick "Handle Payment Redirect" to process it.');
+      }
+    });
+  </script>
+</body>
+
+</html>

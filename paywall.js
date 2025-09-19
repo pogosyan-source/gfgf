@@ -28,12 +28,11 @@
 
   // Прямые вызовы без прокси
 
-  async function jsonRequest(url, method, body){
-    const options = { method: method || 'GET', credentials: 'include' };
-    if (body !== undefined) {
-      options.headers = { 'Content-Type': 'application/json' };
-      options.body = JSON.stringify(body);
-    }
+  async function jsonRequest(url, method, body, extraHeaders){
+    const headers = extraHeaders ? { ...extraHeaders } : {};
+    if (body !== undefined) headers['Content-Type'] = 'application/json';
+    const options = { method: method || 'GET', credentials: 'include', headers };
+    if (body !== undefined) options.body = JSON.stringify(body);
     const res = await fetch(url, options);
     return res.json();
   }
@@ -48,11 +47,18 @@
     const payload = { email: String(email||'').trim(), stream: String(stream||getStream()) };
     if (!payload.email) throw new Error('email');
     const resp = await jsonRequest(ENDPOINTS.register, 'POST', payload);
+    try {
+      const token = resp.access_token || resp.token || resp.result?.access_token || resp.result?.token || '';
+      if (token) { try { localStorage.setItem(STORAGE.accessToken, token); } catch(e){} }
+    } catch(_){}
     return resp;
   }
 
   async function fetchRedirectToken(){
-    const resp = await jsonRequest(ENDPOINTS.redirectToken, 'GET');
+    let token = '';
+    try { token = localStorage.getItem(STORAGE.accessToken) || ''; } catch(_){}
+    const headers = token ? { Authorization: 'Bearer ' + token } : undefined;
+    const resp = await jsonRequest(ENDPOINTS.redirectToken, 'GET', undefined, headers);
     const token = resp.redirect_token || resp.token || resp.result?.redirect_token || resp.result?.token || resp.result || '';
     if (!token) throw new Error('Не удалось получить redirect_token');
     return token;
@@ -60,7 +66,10 @@
 
   async function initiatePayment(methodId, productId){
     const payload = { method_id: String(methodId), product_id: String(productId) };
-    const resp = await jsonRequest(ENDPOINTS.initiatePayment, 'POST', payload);
+    let token = '';
+    try { token = localStorage.getItem(STORAGE.accessToken) || ''; } catch(_){}
+    const headers = token ? { Authorization: 'Bearer ' + token } : undefined;
+    const resp = await jsonRequest(ENDPOINTS.initiatePayment, 'POST', payload, headers);
     const url = resp.redirect || resp.url || resp.result?.redirect || resp.result?.url || '';
     if (!url) throw new Error('Не удалось получить ссылку на оплату');
     try { localStorage.setItem(STORAGE.lastInitiate, JSON.stringify({payload: payload, response: resp})); } catch(e){}

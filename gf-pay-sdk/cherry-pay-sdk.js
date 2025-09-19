@@ -7,7 +7,7 @@
 class CherryPaySDK {
   constructor(options = {}) {
     this.baseUrl = options.baseUrl || 'https://dev-newcherry.cherryx.ai';
-    this.apiUrl = options.apiUrl || 'http://main.devnew-app.cherryx.ai';
+    this.apiUrl = options.apiUrl || 'https://dev-newcherry.cherryx.ai';
     this.stream = options.stream || 'xpn_m';
     this.redirectToken = null;
     this.accessToken = null;
@@ -29,10 +29,11 @@ class CherryPaySDK {
         ...extraHeaders
       };
 
-      const response = await fetch(url, {
-        headers,
-        ...fetchOptions
-      });
+    const response = await fetch(url, {
+      headers,
+      credentials: 'include',
+      ...fetchOptions
+    });
 
       if (!response.ok) {
         const errorData = await response.text();
@@ -97,11 +98,12 @@ class CherryPaySDK {
       useAuth: true
     });
 
-    // Assuming the response contains the token
-    this.redirectToken =
-      typeof response === 'string'
-        ? response
-        : (response && (response.redirect_token || response.token || response.redirectToken));
+    // Extract token from common API shapes
+    const t = (typeof response === 'string') ? response : (
+      response?.redirect_token || response?.token || response?.redirectToken ||
+      response?.data?.redirect_token || response?.data?.token || response?.result?.redirect_token || response?.result?.token
+    );
+    this.redirectToken = t || null;
     console.log('Redirect token obtained:', this.redirectToken);
     return this.redirectToken;
   }

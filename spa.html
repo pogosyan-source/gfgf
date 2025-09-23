@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <title>Оплата — SPA</title>
+  <style>
+    :root{
+      --bg:#FFFFFF; --text:#373A49; --muted:#E7E7E7; --active:#FF2475; --active-text:#000; --radius:10px; --pad:clamp(0.8rem,3vw,1.2rem);
+    }
+    html,body{ margin:0; padding:0; background:var(--bg); color:var(--text); font: clamp(0.95rem,1.6vw,1.05rem)/1.5 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif; }
+    .wrap{ min-height:100svh; display:grid; grid-template-rows:auto 1fr; }
+    .header{ display:flex; align-items:center; gap:clamp(0.4rem,2vw,1rem); padding: env(safe-area-inset-top) var(--pad) clamp(0.6rem,2vw,1rem); }
+    .back{ width: clamp(1.6rem, 4.5vw, 2rem); height: clamp(1.6rem, 4.5vw, 2rem); display:inline-grid; place-items:center; cursor:pointer; border:none; background:transparent; }
+    .back:before{ content:""; width: clamp(0.7rem,2.4vw,0.9rem); height: clamp(0.7rem,2.4vw,0.9rem); display:block; border-left: max(2px,0.2rem) solid var(--active); border-bottom: max(2px,0.2rem) solid var(--active); transform:rotate(45deg); border-radius:2px; }
+    .main{ max-width:min(780px,100%); margin:0 auto; width:100%; padding: clamp(1rem,3vw,1.6rem) var(--pad) clamp(1.2rem,3.5vw,2rem); box-sizing:border-box; display:grid; gap: clamp(0.8rem,2.5vw,1.2rem); }
+    h1{ margin:0; font-size: clamp(1.2rem,3.2vw,1.6rem); text-align:center; }
+    .tile{ display:grid; gap: clamp(0.6rem,2.4vw,1rem); background:#fff; border:1px solid var(--muted); border-radius: clamp(0.6rem,2vw,1rem); padding: clamp(1rem,3.2vw,1.6rem); }
+    .row{ display:grid; gap:clamp(0.3rem,1.2vw,0.6rem); }
+    label{ font-weight:600; font-size: clamp(0.9rem,2.2vw,1.1rem); }
+    input[type=email]{ height: clamp(2.6rem,7svh,3.2rem); padding:0 clamp(0.8rem,2.4vw,1.2rem); border:1px solid var(--muted); border-radius: clamp(0.6rem,2vw,1rem); font-size: clamp(1rem,2.6vw,1.1rem); }
+    .btn{ height: clamp(2.6rem,7svh,3.2rem); border:none; border-radius: clamp(0.6rem,2vw,1rem); background: var(--active); color: var(--active-text); font-weight:700; font-size: clamp(1rem,2.6vw,1.1rem); cursor:pointer; padding: 0 clamp(1rem,3vw,1.6rem); }
+    .error{ color:#ef4444; font-size: clamp(0.9rem,2.4vw,1rem); min-height:1.2em; text-align:center; }
+    .center{ text-align:center; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="header">
+      <button class="back" aria-label="Назад" onclick="goBack()"></button>
+      <div class="title" aria-hidden="true"></div>
+    </header>
+    <main class="main">
+      <h1>Оплата</h1>
+      <section class="tile" id="step-paywall">
+        <div class="row">
+          <label for="spaEmail">Email</label>
+          <input id="spaEmail" type="email" placeholder="you@example.com" required />
+        </div>
+        <input type="hidden" id="spaProduct" value="1" />
+        <input type="hidden" id="spaMethod" value="1" />
+        <button class="btn" id="spaSubmit">Продолжить</button>
+        <div id="spaErr" class="error"></div>
+      </section>
+
+      <section class="tile center" id="step-status" style="display:none">
+        <div id="statusTitle" class="title">Готовим оплату…</div>
+        <div id="statusDesc" class="desc">Пожалуйста, подождите…</div>
+      </section>
+    </main>
+  </div>
+
+  <script src="./paywall.js"></script>
+  <script>
+    function goBack(){ if (history.length>1) history.back(); }
+
+    function show(elId, flag){ var el=document.getElementById(elId); if (!el) return; el.style.display = flag? 'block':'none'; }
+    function setText(id, text){ var el=document.getElementById(id); if (el) el.textContent = String(text||''); }
+
+    async function startFlow(){
+      var emailEl = document.getElementById('spaEmail');
+      var email = String(emailEl.value||'').trim();
+      var productId = String(document.getElementById('spaProduct').value||'1');
+      var methodId = String(document.getElementById('spaMethod').value||'1');
+      var err = document.getElementById('spaErr');
+      err.textContent = '';
+      if (!email) { err.textContent = 'Введите email'; return; }
+      try{
+        show('step-paywall', false);
+        show('step-status', true);
+        setText('statusTitle','Готовим оплату…');
+        setText('statusDesc','Создаём пользователя и получаем токен…');
+
+        await window.paywall.registerUser(email);
+        const rt = await window.paywall.fetchRedirectToken();
+
+        setText('statusTitle','Переходим к оплате…');
+        setText('statusDesc','Открываем платёжную страницу');
+        const url = await window.paywall.initiatePayment(methodId, productId);
+        window.location.assign(url);
+      }catch(e){
+        show('step-status', false);
+        show('step-paywall', true);
+        err.textContent = (e && (e.message||e.error)) || 'Ошибка';
+      }
+    }
+
+    (function init(){
+      // Если вернулись после оплаты с redirect_token — обменять и показать статус
+      var params = new URLSearchParams(window.location.search);
+      var token = params.get('redirect_token');
+      if (token){
+        show('step-paywall', false);
+        show('step-status', true);
+        setText('statusTitle','Завершаем авторизацию…');
+        setText('statusDesc','Обмениваем токен на доступ');
+        window.paywall.exchangeRedirectToken(token)
+          .then(function(){ setText('statusTitle','Готово! Вы авторизованы.'); setText('statusDesc',''); })
+          .catch(function(e){ setText('statusTitle','Не удалось авторизоваться'); setText('statusDesc', (e && (e.message||e.error)) || 'Ошибка'); });
+        return;
+      }
+
+      document.getElementById('spaSubmit').addEventListener('click', startFlow);
+    })();
+  </script>
+</body>
+</html>
+
+

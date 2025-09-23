@@ -125,18 +125,14 @@
     const redirectToken = token || (new URLSearchParams(w.location.search).get('redirect_token')) || (function(){ try { return localStorage.getItem(STORAGE.redirectToken) || ''; } catch(e){ return ''; } })();
     if (!redirectToken) throw new Error('redirect_token не найден');
     const sdk = getSDK();
-    let resp = sdk ? await sdk.exchangeToken(redirectToken) : await jsonRequest(ENDPOINTS.exchangeToken, 'POST', { redirect_token: redirectToken });
-    let tokenFromResp = resp?.access_token || resp?.accessToken || resp?.token || resp?.result?.access_token || resp?.result?.token || '';
-    if (!tokenFromResp) {
-      // Fallback для серверов, где POST не разрешён: попробуем GET ?redirect_token=
-      const respGet = await jsonRequest(ENDPOINTS.exchangeToken + '?redirect_token=' + encodeURIComponent(redirectToken), 'GET');
-      resp = respGet || resp;
-      tokenFromResp = respGet?.access_token || respGet?.accessToken || respGet?.token || respGet?.result?.access_token || respGet?.result?.token || '';
-    }
-    if (tokenFromResp) {
-      try { localStorage.setItem(STORAGE.accessToken, tokenFromResp); } catch(e){}
-      const sdk2 = getSDK(); if (sdk2) { try { sdk2.accessToken = tokenFromResp; } catch(_){} }
-    }
+    const resp = sdk ? await sdk.exchangeToken(redirectToken) : await jsonRequest(ENDPOINTS.exchangeToken, 'POST', { redirect_token: redirectToken });
+    try {
+      const tokenFromResp = resp?.access_token || resp?.accessToken || resp?.token || resp?.result?.access_token || resp?.result?.token || '';
+      if (tokenFromResp) {
+        try { localStorage.setItem(STORAGE.accessToken, tokenFromResp); } catch(e){}
+        const sdk2 = getSDK(); if (sdk2) { try { sdk2.accessToken = tokenFromResp; } catch(_){} }
+      }
+    } catch(e){}
     return resp;
   }
 

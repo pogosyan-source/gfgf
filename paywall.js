@@ -125,7 +125,10 @@
     const redirectToken = token || (new URLSearchParams(w.location.search).get('redirect_token')) || (function(){ try { return localStorage.getItem(STORAGE.redirectToken) || ''; } catch(e){ return ''; } })();
     if (!redirectToken) throw new Error('redirect_token не найден');
     const sdk = getSDK();
-    const resp = sdk ? await sdk.exchangeToken(redirectToken) : await jsonRequest(ENDPOINTS.exchangeToken, 'POST', { redirect_token: redirectToken });
+    let authToken = '';
+    try { authToken = localStorage.getItem(STORAGE.accessToken) || ''; } catch(_){ }
+    const headers = authToken ? { Authorization: 'Bearer ' + authToken } : undefined;
+    const resp = sdk ? await sdk.exchangeToken(redirectToken) : await jsonRequest(ENDPOINTS.exchangeToken, 'POST', { redirect_token: redirectToken }, headers);
     try {
       const tokenFromResp = resp?.access_token || resp?.accessToken || resp?.token || resp?.result?.access_token || resp?.result?.token || '';
       if (tokenFromResp) {
@@ -151,7 +154,8 @@
     const token = await fetchRedirectToken();
     try { localStorage.setItem(STORAGE.redirectToken, token); } catch(e){}
 
-    const qs = new URLSearchParams({ product_id: productId, method_id: methodId, email: email, stream: stream, redirect_token: token });
+    // Не передаём redirect_token в URL, чтобы checkout не считал оплату завершённой
+    const qs = new URLSearchParams({ product_id: productId, method_id: methodId, email: email, stream: stream });
     try {
       const current = new URLSearchParams(w.location.search);
       current.forEach((v,k)=>{ if(!qs.has(k)) qs.set(k,v); });

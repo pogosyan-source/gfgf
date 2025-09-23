@@ -37,7 +37,15 @@
     const options = { method: method || 'GET', headers };
     if (body !== undefined) options.body = JSON.stringify(body);
     const res = await fetch(url, options);
-    return res.json();
+    const ct = res.headers.get('content-type') || '';
+    const parsed = ct.includes('application/json')
+      ? await res.json().catch(() => ({}))
+      : await res.text();
+    if (!res.ok) {
+      const message = (parsed && (parsed.error || parsed.message || parsed.detail)) || (typeof parsed === 'string' ? parsed : 'Request failed');
+      throw new Error(message);
+    }
+    return parsed;
   }
 
   function extractTokenFromRedirectUrl(raw){

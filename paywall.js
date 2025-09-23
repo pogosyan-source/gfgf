@@ -28,26 +28,23 @@
 
   // Прямые вызовы без прокси
 
-  // Инициализация SDK, если подключён
-  let __sdk = null;
-  function getSDK(){
-    if (__sdk) return __sdk;
-    if (typeof w.CherryPaySDK === 'function') {
-      try {
-        __sdk = new w.CherryPaySDK({ baseUrl: API_BASE, apiUrl: API_BASE, stream: getStream() });
-        return __sdk;
-      } catch(_){}
-    }
-    return null;
-  }
+  // SDK отключён для единообразия с curl-подходом (Bearer + прямые вызовы)
+  function getSDK(){ return null; }
 
   async function jsonRequest(url, method, body, extraHeaders){
-    const headers = extraHeaders ? { ...extraHeaders } : {};
+    const headers = { Accept: 'application/json', ...(extraHeaders || {}) };
     if (body !== undefined) headers['Content-Type'] = 'application/json';
-    const options = { method: method || 'GET', credentials: 'include', headers };
+    const options = { method: method || 'GET', headers };
     if (body !== undefined) options.body = JSON.stringify(body);
     const res = await fetch(url, options);
     return res.json();
+  }
+
+  function extractTokenFromRedirectUrl(raw){
+    try{
+      const u = new URL(String(raw));
+      return u.searchParams.get('token') || '';
+    }catch(_){ return ''; }
   }
 
   function showInlineError(message){
@@ -68,8 +65,12 @@
       resp = await jsonRequest(ENDPOINTS.register, 'POST', payload);
     }
     try {
-      const token = resp.access_token || resp.token || resp.result?.access_token || resp.result?.token || '';
-      if (token) { try { localStorage.setItem(STORAGE.accessToken, token); } catch(e){} }
+      const token = resp?.access_token || resp?.token || resp?.result?.access_token || resp?.result?.token || '';
+      if (token) {
+        try { localStorage.setItem(STORAGE.accessToken, token); } catch(e){}
+        const sdk2 = getSDK();
+        if (sdk2) { try { sdk2.accessToken = token; } catch(_){} }
+      }
     } catch(_){ }
     return resp;
   }
@@ -79,12 +80,20 @@
     let redirectToken;
     if (sdk) {
       redirectToken = await sdk.getRedirectToken();
+      if (!redirectToken) {
+        // Fallback: вручную сходить и распарсить nested result
+        let authToken = '';
+        try { authToken = sdk.accessToken || localStorage.getItem(STORAGE.accessToken) || ''; } catch(_){ }
+        const headers = authToken ? { Authorization: 'Bearer ' + authToken } : undefined;
+        const resp = await jsonRequest(ENDPOINTS.redirectToken, 'GET', undefined, headers);
+        redirectToken = resp?.redirect_token || resp?.token || resp?.redirectToken || resp?.result?.redirect_token || resp?.result?.token || extractTokenFromRedirectUrl(resp?.redirect_url) || '';
+      }
     } else {
       let authToken = '';
       try { authToken = localStorage.getItem(STORAGE.accessToken) || ''; } catch(_){ }
       const headers = authToken ? { Authorization: 'Bearer ' + authToken } : undefined;
       const resp = await jsonRequest(ENDPOINTS.redirectToken, 'GET', undefined, headers);
-      redirectToken = resp.redirect_token || resp.token || resp.result?.redirect_token || resp.result?.token || resp.result || '';
+      redirectToken = resp?.redirect_token || resp?.token || resp?.redirectToken || resp?.result?.redirect_token || resp?.result?.token || extractTokenFromRedirectUrl(resp?.redirect_url) || (typeof resp === 'string' ? resp : '') || '';
     }
     if (!redirectToken) throw new Error('Не удалось получить redirect_token');
     return redirectToken;
@@ -117,7 +126,13 @@
     if (!redirectToken) throw new Error('redirect_token не найден');
     const sdk = getSDK();
     const resp = sdk ? await sdk.exchangeToken(redirectToken) : await jsonRequest(ENDPOINTS.exchangeToken, 'POST', { redirect_token: redirectToken });
-    try { localStorage.setItem(STORAGE.accessToken, JSON.stringify(resp)); } catch(e){}
+    try {
+      const tokenFromResp = resp?.access_token || resp?.accessToken || resp?.token || resp?.result?.access_token || resp?.result?.token || '';
+      if (tokenFromResp) {
+        try { localStorage.setItem(STORAGE.accessToken, tokenFromResp); } catch(e){}
+        const sdk2 = getSDK(); if (sdk2) { try { sdk2.accessToken = tokenFromResp; } catch(_){} }
+      }
+    } catch(e){}
     return resp;
   }
 

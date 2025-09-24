@@ -40,7 +40,11 @@
     function goBack(){
       if (window.history.length > 1) window.history.back(); else window.location.href = 'payment.html';
     }
+    function hasAccessToken(){
+      try { return !!localStorage.getItem('pw.access_token'); } catch(e){ return false; }
+    }
     function retryStart(){
+      if (!hasAccessToken()) { window.location.replace('payment.html'); return; }
       document.getElementById('status').textContent = 'Перенаправляем…';
       window.paywall.startCheckout().catch(function(e){
         document.getElementById('status').textContent = 'Не удалось перейти к оплате. Повторите попытку.';
@@ -56,6 +60,7 @@
           window.location.replace('post-email.html?' + params.toString());
           return;
         }
+        if (!hasAccessToken()) { window.location.replace('payment.html'); return; }
       } catch(e){}
       retryStart();
     })();

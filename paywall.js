@@ -55,6 +55,24 @@
     }catch(_){ return ''; }
   }
 
+  function pickPaymentUrl(resp){
+    const isHttp = (u) => typeof u === 'string' && /^https?:\/\//i.test(u);
+    const buckets = [resp, resp && resp.result, resp && resp.data];
+    const fields = ['redirect', 'url', 'payment_url', 'redirect_url', 'checkout_url', 'link'];
+    for (let i=0;i<buckets.length;i++){
+      const b = buckets[i];
+      if (!b) continue;
+      for (let j=0;j<fields.length;j++){
+        const k = fields[j];
+        const v = b[k];
+        if (isHttp(v)) return v;
+        if (v && typeof v === 'object' && isHttp(v.url)) return v.url;
+      }
+    }
+    if (isHttp(resp)) return resp;
+    return '';
+  }
+
   function showInlineError(message){
     const box = d.getElementById('paywall-error') || d.querySelector('.form__item--messages');
     if (box){ box.innerHTML = `<div class="form__error">${String(message||'Ошибка')}</div>`; box.style.display = 'block'; }
@@ -115,16 +133,16 @@
     if (sdk) {
       const resp = await sdk.initiatePayment(payload.method_id, payload.product_id);
       initResponse = resp;
-      url = resp.redirect || resp.url || resp.result?.redirect || resp.result?.url || '';
+      url = pickPaymentUrl(resp);
     } else {
       let token = '';
       try { token = localStorage.getItem(STORAGE.accessToken) || ''; } catch(_){ }
       const headers = token ? { Authorization: 'Bearer ' + token } : undefined;
       const resp = await jsonRequest(ENDPOINTS.initiatePayment, 'POST', payload, headers);
       initResponse = resp;
-      url = resp.redirect || resp.url || resp.result?.redirect || resp.result?.url || '';
+      url = pickPaymentUrl(resp);
     }
-    if (!url) throw new Error('Не удалось получить ссылку на оплату');
+    if (!url) throw new Error('Не удалось получить ссылку на оплату: сервер не вернул URL');
     try { localStorage.setItem(STORAGE.lastInitiate, JSON.stringify({ payload, response: initResponse })); } catch(e){}
     return url;
   }

@@ -236,6 +236,22 @@
     .paywall-input{ height: clamp(2.4rem,6svh,3.2rem); padding: 0 clamp(0.8rem,2.4vw,1.2rem); border:1px solid var(--muted); border-radius: clamp(0.6rem,2vw,1rem); font-size: clamp(1rem,2.6vw,1.1rem); }
     .btn-primary{ height: clamp(2.6rem,6.5svh,3.4rem); border:none; border-radius: clamp(0.6rem,2vw,1rem); background: var(--active); color: var(--active-text); font-weight:700; font-size: clamp(1rem,2.6vw,1.1rem); cursor: pointer; padding: 0 clamp(1rem,3vw,1.6rem); }
     .error-box{ color:#ef4444; font-size: clamp(0.9rem,2.4vw,1rem); min-height: 1.2em; }
+
+    /* Plan selector */
+    .plans{ display:grid; gap: clamp(0.6rem,2vw,0.9rem); margin: 0 0 clamp(1rem,3vw,1.6rem); }
+    .plan-card{ position: relative; display:flex; align-items:center; gap: clamp(0.6rem,2vw,1rem); padding: clamp(0.8rem,2.6vw,1.2rem); border: 2px solid var(--muted); border-radius: clamp(0.7rem,2.2vw,1rem); background:#0a0a0a08; }
+    .plan-card.active{ border-color: var(--active); box-shadow: 0 8px 24px rgba(255,36,117,0.15); }
+    .plan-radio{ width: clamp(1rem,3vw,1.25rem); height: clamp(1rem,3vw,1.25rem); border-radius: 50%; border: 2px solid #1e1e1e; box-shadow: inset 0 0 0 2px #fff; background:#fff; position: relative; }
+    .plan-card.active .plan-radio{ border-color: var(--active); }
+    .plan-card.active .plan-radio:after{ content:""; position:absolute; inset: 22%; background: var(--active); border-radius: 50%; }
+    .plan-body{ display:grid; gap: clamp(0.2rem,1vw,0.4rem); text-align:left; }
+    .plan-tier{ font-weight: 700; font-size: clamp(1rem,2.6vw,1.1rem); }
+    .label-pill{ display:inline-block; padding: 0.2em 0.8em; border-radius: 999px; background:#771a30; color:#fff; font-weight:700; font-size: clamp(0.9rem,2.2vw,1rem); }
+    .plan-right{ margin-left:auto; display:grid; gap: 0.2rem; align-items:center; justify-items:end; }
+    .old-price{ color:#888; opacity:.7; text-decoration: line-through; font-weight:600; }
+    .price-badge{ display:inline-grid; grid-auto-flow:column; align-items:baseline; gap: 0.35em; padding: 0.35em 0.75em; border-radius: 999px; background:#ff86b7; color:#000; font-weight:800; }
+    .price-badge .per{ font-weight:600; opacity:.9; }
+    .best-pill{ position:absolute; right: clamp(0.6rem,2.2vw,1rem); top: -0.9rem; background: var(--active); color:#fff; font-weight:800; border-radius:999px; padding: 0.25rem 0.7rem; font-size: clamp(0.8rem,2vw,0.95rem); }
     </style>
     <!-- Meta Pixel Code (dynamic pixel_id from URL) -->
     <script>
@@ -282,7 +298,7 @@
     
     <main class="payment-section">
         <h2 class="payment-title">Choose your plan</h2>
-        <div class="plans" id="plans"></div>
+        <div class="plans" id="plans" role="radiogroup" aria-label="Plans"></div>
         
         <div id="paywall-error" class="error-box" style="display:none"></div>
         <form id="form-el" onsubmit="submitRegistration(event)" class="paywall-form">
@@ -311,26 +327,24 @@
       var plansEl = document.getElementById('plans');
       if (!plansEl) return;
       var plans = [
-        { id: '5', tier: 'Bronze', label: 'Weekly', badge: '', price: '$0.99', per: 'per day' },
-        { id: '2', tier: 'Gold', label: 'Monthly', badge: 'Best price 🔥', price: '$0.66', per: 'per day', recommended: true },
-        { id: '3', tier: 'Platinum', label: 'Quarterly', badge: '', price: '$0.55', per: 'per day' }
+        { id: '5', tier: 'Bronze', label: 'Weekly', badge: '', old: '$1.99', price: '$0.99', per: 'per day' },
+        { id: '2', tier: 'Gold', label: 'Monthly', badge: 'Best price 🔥', old: '$1.66', price: '$0.66', per: 'per day', recommended: true },
+        { id: '3', tier: 'Platinum', label: 'Quarterly', badge: '', old: '$1.55', price: '$0.55', per: 'per day' }
       ];
       var current = '2';
-      var css = function(c){ return c.filter(Boolean).join(' '); };
       plansEl.innerHTML = plans.map(function(p){
         var active = p.id === current;
         return (
-          '<div class="payment-plan" data-id="'+p.id+'" role="button" tabindex="0" aria-pressed="'+(active?'true':'false')+'">'
-          + (p.badge?('<div class="payment-recommended">'+p.badge+'</div>'):'')
-          + '<div class="payment-plan-wrapper">'
-          +   '<div class="wrapper">'
-          +     '<div class="text-bold-24">'+p.tier+'</div>'
-          +     '<div class="text-bold-24">'+p.label+'</div>'
-          +   '</div>'
-          +   '<div class="money">'
-          +     '<div class="payment-plan-price">'+p.price+'</div>'
-          +     '<div class="text-dark-14">/ '+p.per+'</div>'
-          +   '</div>'
+          '<div class="plan-card'+(active?' active':'')+'" data-id="'+p.id+'" role="radio" aria-checked="'+(active?'true':'false')+'" tabindex="0">'
+          + (p.badge?('<div class="best-pill">'+p.badge+'</div>'):'')
+          + '<div class="plan-radio" aria-hidden="true"></div>'
+          + '<div class="plan-body">'
+          +   '<div class="plan-tier">'+p.tier+'</div>'
+          +   '<div class="label-pill">'+p.label+'</div>'
+          + '</div>'
+          + '<div class="plan-right">'
+          +   (p.old?('<div class="old-price">'+p.old+'</div>'):'')
+          +   '<div class="price-badge"><span>'+p.price+'</span><span class="per">'+p.per+'</span></div>'
           + '</div>'
           + '</div>'
         );
@@ -338,12 +352,14 @@
       function select(id){
         current = id;
         try { document.getElementById('product_id').value = id; } catch(e){}
-        [].slice.call(plansEl.querySelectorAll('.payment-plan')).forEach(function(card){
-          card.style.borderColor = (card.getAttribute('data-id')===id)? '#FF2475':'#E7E7E7';
+        [].slice.call(plansEl.querySelectorAll('.plan-card')).forEach(function(card){
+          var on = (card.getAttribute('data-id')===id);
+          card.classList.toggle('active', on);
+          card.setAttribute('aria-checked', on?'true':'false');
         });
       }
-      plansEl.addEventListener('click', function(e){ var card=e.target.closest('.payment-plan'); if (!card) return; select(card.getAttribute('data-id')); });
-      plansEl.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ var card=e.target.closest('.payment-plan'); if (!card) return; e.preventDefault(); select(card.getAttribute('data-id')); }});
+      plansEl.addEventListener('click', function(e){ var card=e.target.closest('.plan-card'); if (!card) return; select(card.getAttribute('data-id')); });
+      plansEl.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ var card=e.target.closest('.plan-card'); if (!card) return; e.preventDefault(); select(card.getAttribute('data-id')); }});
       select(current);
     })();
 </script>

@@ -281,22 +281,8 @@
     </header>
     
     <main class="payment-section">
-        <h2 class="payment-title">Your Virtual Girlfriend Can't Wait to Meet You! 💕</h2>
-        <div class="payment-plan">
-            <div class="payment-container">
-                <div class="payment-recommended">Amazing Offer</div>
-            </div>
-            <div class="payment-plan-wrapper">
-                <div class="wrapper">
-                    <div class="text-bold-24">Seven days.</div>
-                    <div class="text-bold-24">Endless AI charm</div>
-                </div>
-                <div class="money">
-                    <div class="payment-plan-price">$ 1,43</div>
-                    <div class="text-dark-14">/ Per day</div>
-                </div>
-            </div>
-        </div>
+        <h2 class="payment-title">Choose your plan</h2>
+        <div class="plans" id="plans"></div>
         
         <div id="paywall-error" class="error-box" style="display:none"></div>
         <form id="form-el" onsubmit="submitRegistration(event)" class="paywall-form">
@@ -304,7 +290,7 @@
             <label for="emailInput" class="paywall-label">Email</label>
             <input id="emailInput" name="emailInput" type="email" class="paywall-input" placeholder="you@example.com" required />
           </div>
-          <input type="hidden" name="product_id" value="1" />
+          <input type="hidden" name="product_id" id="product_id" value="2" />
           <input type="hidden" name="method_id" value="1" />
           <button type="submit" class="btn-primary">Continue</button>
         </form>
@@ -320,6 +306,46 @@
             window.history.back();
         }
     }
+    // Plans like on screenshot: 7 days (id 5), 1 month (id 2), 3 months (id 3)
+    (function renderPlans(){
+      var plansEl = document.getElementById('plans');
+      if (!plansEl) return;
+      var plans = [
+        { id: '5', tier: 'Bronze', label: 'Weekly', badge: '', price: '$0.99', per: 'per day' },
+        { id: '2', tier: 'Gold', label: 'Monthly', badge: 'Best price 🔥', price: '$0.66', per: 'per day', recommended: true },
+        { id: '3', tier: 'Platinum', label: 'Quarterly', badge: '', price: '$0.55', per: 'per day' }
+      ];
+      var current = '2';
+      var css = function(c){ return c.filter(Boolean).join(' '); };
+      plansEl.innerHTML = plans.map(function(p){
+        var active = p.id === current;
+        return (
+          '<div class="payment-plan" data-id="'+p.id+'" role="button" tabindex="0" aria-pressed="'+(active?'true':'false')+'">'
+          + (p.badge?('<div class="payment-recommended">'+p.badge+'</div>'):'')
+          + '<div class="payment-plan-wrapper">'
+          +   '<div class="wrapper">'
+          +     '<div class="text-bold-24">'+p.tier+'</div>'
+          +     '<div class="text-bold-24">'+p.label+'</div>'
+          +   '</div>'
+          +   '<div class="money">'
+          +     '<div class="payment-plan-price">'+p.price+'</div>'
+          +     '<div class="text-dark-14">/ '+p.per+'</div>'
+          +   '</div>'
+          + '</div>'
+          + '</div>'
+        );
+      }).join('');
+      function select(id){
+        current = id;
+        try { document.getElementById('product_id').value = id; } catch(e){}
+        [].slice.call(plansEl.querySelectorAll('.payment-plan')).forEach(function(card){
+          card.style.borderColor = (card.getAttribute('data-id')===id)? '#FF2475':'#E7E7E7';
+        });
+      }
+      plansEl.addEventListener('click', function(e){ var card=e.target.closest('.payment-plan'); if (!card) return; select(card.getAttribute('data-id')); });
+      plansEl.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ var card=e.target.closest('.payment-plan'); if (!card) return; e.preventDefault(); select(card.getAttribute('data-id')); }});
+      select(current);
+    })();
 </script>
 </body>
 </html>

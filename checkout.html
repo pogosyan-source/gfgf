@@ -27,10 +27,10 @@
     </header>
     <main class="main">
       <section class="tile center">
-        <div class="title">Перенаправляем на оплату…</div>
-        <div class="desc" id="status">Если ничего не происходит, нажмите кнопку ниже.</div>
+        <div class="title">Redirecting to payment…</div>
+        <div class="desc" id="status">If nothing happens, click the button below.</div>
         <div style="height: clamp(0.4rem,2vh,1rem)"></div>
-        <button class="btn" onclick="retryStart()">Повторить переход к оплате</button>
+        <button class="btn" onclick="retryStart()">Try payment again</button>
       </section>
     </main>
   </div>
@@ -45,7 +45,7 @@
     }
     function retryStart(){
       if (!hasAccessToken()) { window.location.replace('payment.html'); return; }
-      document.getElementById('status').textContent = 'Перенаправляем…';
+      document.getElementById('status').textContent = 'Redirecting…';
       window.paywall.startCheckout().catch(function(e){
         document.getElementById('status').textContent = 'Не удалось перейти к оплате. Повторите попытку.';
         console.error(e);

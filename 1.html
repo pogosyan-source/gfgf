@@ -15,7 +15,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: #FFFFFF;
             overflow-x: hidden;
-            min-height: 100vh;
+            min-height: 100dvh;
             position: relative;
         }
 
@@ -96,7 +96,7 @@
         /* Button Styles with Pulse Animation */
         .next-button {
             position: fixed;
-            bottom: 32px;
+            bottom: calc(env(safe-area-inset-bottom) + 16px);
             left: 20px;
             right: 20px;
             background-color: #FF2475;

@@ -94,7 +94,7 @@
     }
 
     .payment-section {
-      padding: 20px var(--container-pad) 0;
+      padding: 20px var(--container-pad) calc(env(safe-area-inset-bottom) + clamp(16px, 4vh, 32px));
       max-width: 720px;
       margin: 0 auto;
       text-align: center;
@@ -234,7 +234,7 @@
     .paywall-row{ display:grid; gap:clamp(0.3rem,1.2vw,0.6rem); }
     .paywall-label{ font-size: clamp(0.9rem,2.2vw,1.1rem); font-weight:600; }
     .paywall-input{ height: clamp(2.4rem,6svh,3.2rem); padding: 0 clamp(0.8rem,2.4vw,1.2rem); border:1px solid var(--muted); border-radius: clamp(0.6rem,2vw,1rem); font-size: clamp(1rem,2.6vw,1.1rem); }
-    .btn-primary{ height: clamp(2.6rem,6.5svh,3.4rem); border:none; border-radius: clamp(0.6rem,2vw,1rem); background: var(--active); color: var(--active-text); font-weight:700; font-size: clamp(1rem,2.6vw,1.1rem); cursor: pointer; padding: 0 clamp(1rem,3vw,1.6rem); }
+    .btn-primary{ height: clamp(2.6rem,6.5svh,3.4rem); border:none; border-radius: clamp(0.6rem,2vw,1rem); background: var(--active); color: var(--active-text); font-weight:700; font-size: clamp(1rem,2.6vw,1.1rem); cursor: pointer; padding: 0 clamp(1rem,3vw,1.6rem); margin-bottom: calc(env(safe-area-inset-bottom) + clamp(8px, 2vh, 16px)); }
     .error-box{ color:#ef4444; font-size: clamp(0.9rem,2.4vw,1rem); min-height: 1.2em; }
 
     /* Plan selector */

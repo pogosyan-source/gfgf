@@ -30,7 +30,7 @@
     }
 
     .screen{
-      min-height: 100vh;
+      min-height: 100dvh;
       display: grid;
       grid-template-rows: auto auto 1fr auto;
       background: var(--bg);
@@ -234,7 +234,7 @@
     .paywall-row{ display:grid; gap:clamp(0.3rem,1.2vw,0.6rem); }
     .paywall-label{ font-size: clamp(0.9rem,2.2vw,1.1rem); font-weight:600; }
     .paywall-input{ height: clamp(2.4rem,6svh,3.2rem); padding: 0 clamp(0.8rem,2.4vw,1.2rem); border:1px solid var(--muted); border-radius: clamp(0.6rem,2vw,1rem); font-size: clamp(1rem,2.6vw,1.1rem); }
-    .btn-primary{ height: clamp(2.6rem,6.5svh,3.4rem); border:none; border-radius: clamp(0.6rem,2vw,1rem); background: var(--active); color: var(--active-text); font-weight:700; font-size: clamp(1rem,2.6vw,1.1rem); cursor: pointer; padding: 0 clamp(1rem,3vw,1.6rem); margin-bottom: calc(env(safe-area-inset-bottom) + clamp(8px, 2vh, 16px)); }
+    .btn-primary{ height: clamp(2.6rem,6.5svh,3.4rem); border:none; border-radius: clamp(0.6rem,2vw,1rem); background: var(--active); color: var(--active-text); font-weight:700; font-size: clamp(1rem,2.6vw,1.1rem); cursor: pointer; padding: 0 clamp(1rem,3vw,1.6rem); width: 100%; }
     .error-box{ color:#ef4444; font-size: clamp(0.9rem,2.4vw,1rem); min-height: 1.2em; }
 
     /* Plan selector */
@@ -252,6 +252,9 @@
     .price-badge{ display:inline-grid; grid-auto-flow:column; align-items:baseline; gap: 0.35em; padding: 0.35em 0.75em; border-radius: 999px; background:#ff86b7; color:#000; font-weight:800; }
     .price-badge .per{ font-weight:600; opacity:.9; }
     .best-pill{ position:absolute; right: clamp(0.6rem,2.2vw,1rem); top: -0.9rem; background: var(--active); color:#fff; font-weight:800; border-radius:999px; padding: 0.25rem 0.7rem; font-size: clamp(0.8rem,2vw,0.95rem); }
+
+    /* Sticky CTA to avoid iOS browser bars overlap */
+    .cta-sticky{ position: sticky; bottom: 0; z-index: 20; padding: clamp(0.6rem,2.5vw,1rem) var(--container-pad) calc(env(safe-area-inset-bottom) + clamp(0.6rem,2vh,1rem)); background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.96) 30%); backdrop-filter: saturate(1.1) blur(6px); margin-left: calc(var(--container-pad) * -1); margin-right: calc(var(--container-pad) * -1); }
     </style>
     <!-- Meta Pixel Code (dynamic pixel_id from URL) -->
     <script>
@@ -301,7 +304,8 @@
         <div class="plans" id="plans" role="radiogroup" aria-label="Plans"></div>
         
         <div id="paywall-error" class="error-box" style="display:none"></div>
-        <form id="form-el" onsubmit="submitRegistration(event)" class="paywall-form">
+        <div class="cta-sticky">
+        <form id="form-el" onsubmit="submitRegistration(event)" class="paywall-form" style="margin:0">
           <div class="paywall-row">
             <label for="emailInput" class="paywall-label">Email</label>
             <input id="emailInput" name="emailInput" type="email" class="paywall-input" placeholder="you@example.com" required />
@@ -310,6 +314,7 @@
           <input type="hidden" name="method_id" value="1" />
           <button type="submit" class="btn-primary">Continue</button>
         </form>
+        </div>
     </main>
 </div>
 <script>

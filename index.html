@@ -55,8 +55,9 @@
 
         .slide iframe {
             width: 100%;
-            height: 100%;
+            height: calc(100% - max(env(safe-area-inset-bottom), var(--ios-bottom, 0px)));
             border: none;
+            display: block;
         }
 
         /* Global Progress Bar */
@@ -190,7 +191,7 @@
             
             <!-- Slide 1: Video intro -->
         <div class="slide active" data-slide="1">
-            <iframe src="1.html" title="AI Girlfriend Intro"></iframe>
+            <iframe src="1.html?v=3" title="AI Girlfriend Intro"></iframe>
             </div>
 
         <!-- Slide 2: Ethnicity selection -->
@@ -298,26 +299,32 @@
     </div>
 
     <script>
-        // iOS Safari bottom bar compensation for iframes
-        let IOS_BOTTOM = 0;
-        function computeIosBottom(){
-            try{
-                if (window.visualViewport){
-                    const vv = window.visualViewport;
-                    IOS_BOTTOM = Math.max(0, (window.innerHeight - vv.height - vv.offsetTop));
-                } else {
-                    IOS_BOTTOM = 0;
-                }
-            }catch(_){ IOS_BOTTOM = 0; }
-            try{ document.documentElement.style.setProperty('--ios-bottom', IOS_BOTTOM + 'px'); }catch(_){ }
-        }
-        computeIosBottom();
-        window.addEventListener('resize', computeIosBottom);
-        window.addEventListener('orientationchange', computeIosBottom);
-        if (window.visualViewport){
-            window.visualViewport.addEventListener('resize', computeIosBottom);
-            window.visualViewport.addEventListener('scroll', computeIosBottom);
-        }
+        (function(){
+            function updateVh(){
+                var vh = window.innerHeight * 0.01;
+                document.documentElement.style.setProperty('--vh', vh + 'px');
+            }
+            function updateIosBottom(){
+                try{
+                    if (window.visualViewport) {
+                        var offset = Math.max(0, (window.innerHeight - window.visualViewport.height - window.visualViewport.offsetTop));
+                        document.documentElement.style.setProperty('--ios-bottom', offset + 'px');
+                    } else {
+                        document.documentElement.style.setProperty('--ios-bottom', '0px');
+                    }
+                }catch(e){ document.documentElement.style.setProperty('--ios-bottom', '0px'); }
+            }
+            updateVh();
+            updateIosBottom();
+            window.addEventListener('resize', function(){ updateVh(); updateIosBottom(); });
+            window.addEventListener('orientationchange', function(){ updateVh(); updateIosBottom(); });
+            if (window.visualViewport){
+                window.visualViewport.addEventListener('resize', updateIosBottom);
+                window.visualViewport.addEventListener('scroll', updateIosBottom);
+            }
+        })();
+    </script>
+    <script>
         // Funnel configuration
         const FUNNEL_CONFIG = {
             totalSlides: 21,
@@ -439,8 +446,7 @@
                     action: 'state',
                     answers: ANSWERS,
                     currentSlide: FUNNEL_CONFIG.currentSlide,
-                    totalSlides: FUNNEL_CONFIG.totalSlides,
-                    iosBottom: IOS_BOTTOM
+                    totalSlides: FUNNEL_CONFIG.totalSlides
                 });
             });
         }

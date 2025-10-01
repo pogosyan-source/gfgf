@@ -66,6 +66,16 @@
             font-size: 14px;
         }
 
+        /* Screen layout to anchor footer at bottom */
+        .screen {
+            min-height: 100vh;
+            min-height: 100svh;
+            min-height: 100dvh;
+            min-height: calc(var(--vh, 1vh) * 100);
+            display: grid;
+            grid-template-rows: 1fr auto;
+        }
+
         /* Content Container */
         .content-container {
             position: fixed;
@@ -187,8 +197,11 @@
     </div>
 
     <!-- Footer (Sticky CTA) -->
-    <div class="footer">
-        <button class="next-button" onclick="handleNext()">Next</button>
+    <div class="screen">
+        <div class="spacer" aria-hidden="true"></div>
+        <div class="footer">
+            <button class="next-button" onclick="handleNext()">Next</button>
+        </div>
     </div>
 
     <script>

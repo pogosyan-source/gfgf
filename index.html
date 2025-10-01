@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>AI Girlfriend - Funnel</title>
     <style>
         * {
@@ -298,6 +298,26 @@
     </div>
 
     <script>
+        // iOS Safari bottom bar compensation for iframes
+        let IOS_BOTTOM = 0;
+        function computeIosBottom(){
+            try{
+                if (window.visualViewport){
+                    const vv = window.visualViewport;
+                    IOS_BOTTOM = Math.max(0, (window.innerHeight - vv.height - vv.offsetTop));
+                } else {
+                    IOS_BOTTOM = 0;
+                }
+            }catch(_){ IOS_BOTTOM = 0; }
+            try{ document.documentElement.style.setProperty('--ios-bottom', IOS_BOTTOM + 'px'); }catch(_){ }
+        }
+        computeIosBottom();
+        window.addEventListener('resize', computeIosBottom);
+        window.addEventListener('orientationchange', computeIosBottom);
+        if (window.visualViewport){
+            window.visualViewport.addEventListener('resize', computeIosBottom);
+            window.visualViewport.addEventListener('scroll', computeIosBottom);
+        }
         // Funnel configuration
         const FUNNEL_CONFIG = {
             totalSlides: 21,
@@ -419,7 +439,8 @@
                     action: 'state',
                     answers: ANSWERS,
                     currentSlide: FUNNEL_CONFIG.currentSlide,
-                    totalSlides: FUNNEL_CONFIG.totalSlides
+                    totalSlides: FUNNEL_CONFIG.totalSlides,
+                    iosBottom: IOS_BOTTOM
                 });
             });
         }

@@ -106,13 +106,14 @@
             max-width: 280px;
         }
 
-        /* Footer wrapper for CTA (sticky with safe-area) */
+        /* Footer wrapper for CTA (sticky with safe-area and iOS bottom bar avoidance) */
         .footer {
             position: sticky;
-            bottom: env(safe-area-inset-bottom);
+            bottom: 0;
             display: grid;
             place-items: center;
-            padding: 12px clamp(16px, 4vw, 24px) clamp(12px, 2vh, 24px);
+            padding: 12px clamp(16px, 4vw, 24px)
+                     calc(max(env(safe-area-inset-bottom), var(--ios-bottom, 0px)) + clamp(12px, 2vh, 24px));
             background: linear-gradient(to top, rgba(255, 255, 255, 1), rgba(255,255,255,.75), transparent);
             pointer-events: none;
             z-index: 20;
@@ -233,9 +234,28 @@
                 var vh = window.innerHeight * 0.01;
                 document.documentElement.style.setProperty('--vh', vh + 'px');
             }
+            function updateIosBottom(){
+                try{
+                    if (window.visualViewport) {
+                        var offset = Math.max(0, (window.innerHeight - window.visualViewport.height - window.visualViewport.offsetTop));
+                        document.documentElement.style.setProperty('--ios-bottom', offset + 'px');
+                    } else {
+                        document.documentElement.style.setProperty('--ios-bottom', '0px');
+                    }
+                } catch(e){
+                    document.documentElement.style.setProperty('--ios-bottom', '0px');
+                }
+            }
             updateVh();
+            updateIosBottom();
             window.addEventListener('resize', updateVh);
             window.addEventListener('orientationchange', updateVh);
+            window.addEventListener('resize', updateIosBottom);
+            window.addEventListener('orientationchange', updateIosBottom);
+            if (window.visualViewport){
+                window.visualViewport.addEventListener('resize', updateIosBottom);
+                window.visualViewport.addEventListener('scroll', updateIosBottom);
+            }
         })();
     </script>
 </body>

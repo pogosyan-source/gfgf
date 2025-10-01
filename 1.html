@@ -109,10 +109,10 @@
         /* Footer wrapper for CTA (sticky with safe-area) */
         .footer {
             position: sticky;
-            bottom: 0;
+            bottom: env(safe-area-inset-bottom);
             display: grid;
             place-items: center;
-            padding: 12px clamp(16px, 4vw, 24px) calc(env(safe-area-inset-bottom) + clamp(12px, 2vh, 24px));
+            padding: 12px clamp(16px, 4vw, 24px) clamp(12px, 2vh, 24px);
             background: linear-gradient(to top, rgba(255, 255, 255, 1), rgba(255,255,255,.75), transparent);
             pointer-events: none;
             z-index: 20;

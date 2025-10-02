@@ -477,5 +477,55 @@
             }
         });
     </script>
+    <script>
+        (function(){
+            try {
+                var params = new URLSearchParams(window.location.search);
+                var shouldFake = (params.get('fake_purchase') || '').toString().toLowerCase();
+                if (!(shouldFake === '1' || shouldFake === 'true' || shouldFake === 'yes')) return;
+
+                var sentKey = 'ff.fake_purchase_sent';
+                if (sessionStorage.getItem(sentKey) === '1') return;
+
+                // Prepare payload from URL or storage
+                var valueParam = parseFloat(params.get('value') || '0.01');
+                var value = (isFinite(valueParam) && valueParam > 0) ? valueParam : 0.01;
+                var currency = (params.get('currency') || 'USD').toString().toUpperCase();
+                var pid = (function(){
+                    var fromUrl = params.get('pid');
+                    if (fromUrl) return String(fromUrl);
+                    try { return String(localStorage.getItem('pw.product_id') || localStorage.getItem('product_id') || '2'); } catch(_) { return '2'; }
+                })();
+                var eventID = params.get('event_id') || ('FAKE-' + Date.now());
+                var pixelId = params.get('pixel_id') || '1352930370175119';
+
+                // Ensure Meta Pixel is available
+                (function(f,b,e,v,n,t,s){
+                    if(f.fbq) return; n=f.fbq=function(){ n.callMethod ? n.callMethod.apply(n,arguments) : n.queue.push(arguments); };
+                    if(!f._fbq) f._fbq=n; n.push=n; n.loaded=!0; n.version='2.0'; n.queue=[]; t=b.createElement(e); t.async=!0; t.src=v; s=b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t,s);
+                })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+
+                // Init and track
+                try { fbq('init', pixelId); } catch(_) {}
+                try { fbq('track', 'PageView'); } catch(_) {}
+                try {
+                    fbq('track', 'Purchase', {
+                        value: value,
+                        currency: currency,
+                        contents: [{ id: String(pid), quantity: 1 }],
+                        content_type: 'product'
+                    }, { eventID: eventID });
+                    sessionStorage.setItem(sentKey, '1');
+                } catch(_) {}
+
+                // Optional: cleanup URL if requested
+                if ((params.get('clear_fake') || '') === '1') {
+                    ['fake_purchase','value','currency','pid','event_id','clear_fake'].forEach(function(k){ params.delete(k); });
+                    var newUrl = window.location.pathname + (params.toString() ? ('?' + params.toString()) : '') + window.location.hash;
+                    try { history.replaceState(null, '', newUrl); } catch(_) {}
+                }
+            } catch(_) {}
+        })();
+    </script>
 </body>
 </html>
